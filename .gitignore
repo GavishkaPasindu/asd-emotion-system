@@ -1,0 +1,34 @@
+# Virtual environments
+backend/venv/
+backend/env/
+backend/.venv/
+frontend/node_modules/
+backend/dataset_split/
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Models (Too large for GitHub)
+backend/trained_models/*.h5
+backend/trained_models/*.keras
+backend/trained_models/*.pt
+backend/trained_models/*.pth
+backend/trained_models/*.json
+!backend/trained_models/.gitkeep
+
+# Env files
+.env
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# Build folders
+frontend/.next/
+frontend/out/
+
+# OS files
+.DS_Store
+Thumbs.db

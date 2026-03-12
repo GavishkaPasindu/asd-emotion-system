@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Environment variables
+.env
+
+# Trained ML models (too large for git — upload via Railway Volume or external storage)
+trained_models/*.h5
+trained_models/*.keras
+trained_models/*.pt
+trained_models/*.pth
+
+# Temp files from model loading
+/tmp/*.h5
+/tmp/*.task
+
+# OS
+.DS_Store
+Thumbs.db
