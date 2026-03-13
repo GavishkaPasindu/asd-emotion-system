@@ -31,12 +31,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 app.config['MAX_CONTENT_LENGTH'] = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))
 
-# Configure CORS
-CORS(app, resources={
-    r"/api/*": {
-        "origins": os.getenv('CORS_ORIGINS', 'http://localhost:3000').split(',')
-    }
-})
+# Configure CORS (Allow all for Viva stability)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Initialize SocketIO
 socketio = SocketIO(app, cors_allowed_origins=os.getenv('CORS_ORIGINS', 'http://localhost:3000').split(','))
