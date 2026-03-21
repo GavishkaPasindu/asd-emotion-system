@@ -101,7 +101,7 @@ export default function CombinedAnalysisPage() {
                                         Original Image
                                     </h3>
                                     <img
-                                        src={`data:image/png;base64,${result.original_image}`}
+                                        src={result.original_image}
                                         alt="Original"
                                         className="w-full rounded-lg"
                                     />

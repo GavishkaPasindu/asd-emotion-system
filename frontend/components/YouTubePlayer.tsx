@@ -39,7 +39,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
 
     return (
         <div className={`relative overflow-hidden ${isFullscreen ? '' : 'rounded-2xl shadow-lg border-4 border-yellow-400'} ${className}`}>
-            {/* TV decoration — only in normal mode */}
+            {/* TV decoration -- only in normal mode */}
             {!isFullscreen && (
                 <>
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-yellow-400 rounded-t-lg z-10"></div>
@@ -76,7 +76,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
                 </div>
             </div>
 
-            {/* Fun border bottom — only in normal mode */}
+            {/* Fun border bottom -- only in normal mode */}
             {!isFullscreen && (
                 <div className="h-4 bg-yellow-400 w-full flex justify-center items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>

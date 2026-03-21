@@ -8,21 +8,21 @@ Complete full-stack application for ASD detection and emotion recognition with e
 
 ```
 asd-emotion-system/
-├── backend/                    # Flask API server
-│   ├── app.py                 # Main application
-│   ├── models/                # ML model classes
-│   ├── routes/                # API endpoints
-│   ├── utils/                 # Utilities (Grad-CAM)
-│   ├── trained_models/        # Trained model files (you need to create these)
-│   ├── train_asd_model.py     # Training script for ASD model
-│   ├── train_emotion_model.py # Training script for emotion model
-│   ├── TRAINING_GUIDE.md      # Detailed training instructions
-│   └── requirements.txt       # Python dependencies
-└── frontend/                   # Next.js React app
-    ├── app/                   # Application pages
-    ├── lib/                   # API and WebSocket clients
-    ├── components/            # Reusable UI components
-    └── package.json           # Node dependencies
+├-- backend/                    # Flask API server
+│   ├-- app.py                 # Main application
+│   ├-- models/                # ML model classes
+│   ├-- routes/                # API endpoints
+│   ├-- utils/                 # Utilities (Grad-CAM)
+│   ├-- trained_models/        # Trained model files (you need to create these)
+│   ├-- train_asd_model.py     # Training script for ASD model
+│   ├-- train_emotion_model.py # Training script for emotion model
+│   ├-- TRAINING_GUIDE.md      # Detailed training instructions
+│   └-- requirements.txt       # Python dependencies
+└-- frontend/                   # Next.js React app
+    ├-- app/                   # Application pages
+    ├-- lib/                   # API and WebSocket clients
+    ├-- components/            # Reusable UI components
+    └-- package.json           # Node dependencies
 ```
 
 ## Quick Start
@@ -38,22 +38,22 @@ https://www.kaggle.com/datasets/hasibur013/autism-facial-emotion-recognition
 For ASD Detection:
 ```
 dataset/
-├── ASD/          # ASD images
-└── NON_ASD/      # Non-ASD images
+├-- ASD/          # ASD images
+└-- NON_ASD/      # Non-ASD images
 ```
 
 For Emotion Recognition:
 ```
 emotion_dataset/
-├── train/
-│   ├── anger/
-│   ├── fear/
-│   ├── joy/
-│   ├── sadness/
-│   ├── surprise/
-│   └── Natural/
-└── test/
-    └── (same structure)
+├-- train/
+│   ├-- anger/
+│   ├-- fear/
+│   ├-- joy/
+│   ├-- sadness/
+│   ├-- surprise/
+│   └-- Natural/
+└-- test/
+    └-- (same structure)
 ```
 
 #### Step 3: Train Models

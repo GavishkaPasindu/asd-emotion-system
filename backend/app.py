@@ -44,7 +44,7 @@ socketio = SocketIO(app, cors_allowed_origins=os.getenv('CORS_ORIGINS', 'http://
 from models.manager import model_manager
 
 print("\n" + "="*60)
-print("  ASD EMOTION RECOGNITION — Initializing Model Manager")
+print("  ASD EMOTION RECOGNITION -- Initializing Model Manager")
 print("="*60)
 
 TRAINED_MODELS_DIR = os.getenv('TRAINED_MODELS_DIR', 'trained_models')
@@ -122,7 +122,7 @@ def get_model_metrics():
                 'error': f"Model '{model_type}' not loaded"
             }), 404
 
-        # ── Try to load real metrics from saved JSON files ─────────────────
+        # -- Try to load real metrics from saved JSON files ----------------─
         import json as _json
         import glob as _glob
         metrics_dir = 'trained_models'
@@ -143,7 +143,7 @@ def get_model_metrics():
                 exact = os.path.join(metrics_dir, f'{model_t}_{suffix}')
                 if os.path.exists(exact):
                     return exact
-                # 2. Versioned: model_t_v*_suffix  — only matches _v not arbitrary chars
+                # 2. Versioned: model_t_v*_suffix  -- only matches _v not arbitrary chars
                 pattern = os.path.join(metrics_dir, f'{model_t}_v*_{suffix}')
                 matches = sorted(_glob.glob(pattern))
                 if matches:
@@ -164,7 +164,7 @@ def get_model_metrics():
         asd_metrics = _load_metrics(model_type, 'asd')
         emo_metrics = _load_metrics(model_type, 'emotion')
 
-        # ── Sample/demo metrics used when real files are absent ────────────
+        # -- Sample/demo metrics used when real files are absent ------------
         # These are representative numbers for a ResNet50V2-class model
         # trained on ASD+emotion data. Replace by saving real metrics from Colab.
         if asd_metrics is None:
@@ -183,7 +183,7 @@ def get_model_metrics():
                 'accuracy': 0.895,
             }
             asd_metrics = {
-                'title': f'{model_type.upper()} — ASD Classification (sample)',
+                'title': f'{model_type.upper()} -- ASD Classification (sample)',
                 'confusion_matrix': cm,
                 'classification_report': asd_report,
                 'labels': asd_labels,
@@ -204,7 +204,7 @@ def get_model_metrics():
             emo_report['weighted avg'] = {'precision': 0.83, 'recall': 0.81, 'f1-score': 0.82, 'support': n * 42}
             emo_report['accuracy'] = 0.824
             emo_metrics = {
-                'title': f'{model_type.upper()} — Emotion Recognition (sample)',
+                'title': f'{model_type.upper()} -- Emotion Recognition (sample)',
                 'confusion_matrix': cm,
                 'classification_report': emo_report,
                 'labels': emo_labels,

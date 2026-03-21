@@ -220,7 +220,7 @@ export default function ResultsDisplay({ result, type }: ResultsDisplayProps) {
                 <div className="card border-t-4 border-[rgb(var(--color-accent))] animate-slide-up">
                     <h4 className="font-semibold text-[rgb(var(--color-text))] mb-2 flex items-center gap-2">
                         <Activity className="w-5 h-5 text-[rgb(var(--color-accent))]" />
-                        {metrics.metrics[type]?.title} — Performance Matrix
+                        {metrics.metrics[type]?.title} -- Performance Matrix
                     </h4>
                     <p className="text-xs text-[rgb(var(--color-text-secondary))] mb-6">
                         Verified results from the training phase for model: <span className="font-mono text-[rgb(var(--color-primary))]">{metrics.model_type}</span>

@@ -1,5 +1,5 @@
 """
-Model Manager — Singleton for handling multiple active ML models
+Model Manager -- Singleton for handling multiple active ML models
 ===============================================================
 This manager loads all available trained model pairs from trained_models/
 and allows routes to fetch a specific model by type.

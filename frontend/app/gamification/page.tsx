@@ -10,7 +10,7 @@ import SocialAvatar from '../../components/SocialAvatar';
 import { Video, Award, ChevronLeft, Play } from 'lucide-react';
 import { useModel } from '../context/ModelContext';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --─ Types --------------------------------------------------------------------
 interface ActivityItem {
     id: string;
     title: string;
@@ -28,7 +28,7 @@ interface Category {
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-// ─── Main page ────────────────────────────────────────────────────────────────
+// --─ Main page ----------------------------------------------------------------
 export default function GamificationPage() {
     const router = useRouter();
     const { selectedModel } = useModel();
@@ -54,7 +54,7 @@ export default function GamificationPage() {
             .catch(console.error);
     }, []);
 
-    // ── Start session ──────────────────────────────────────────────────────────
+    // -- Start session ----------------------------------------------------------
     const handleStartSession = async (category: Category, item: ActivityItem) => {
         setLoading(true);
         try {
@@ -90,7 +90,7 @@ export default function GamificationPage() {
 
 
 
-    // ── Frame capture ─────────────────────────────────────────────────────────
+    // -- Frame capture --------------------------------------------------------─
     const handleFrameCapture = async (imageSrc: string) => {
         if (!sessionIdRef.current || !isCapturing) return;
         try {
@@ -109,7 +109,7 @@ export default function GamificationPage() {
         } catch { /* silent */ }
     };
 
-    // ── Finish session ─────────────────────────────────────────────────────────
+    // -- Finish session --------------------------------------------------------─
     const finishSession = async (solved: boolean = false) => {
         setIsCapturing(false);
         setLoading(true);
@@ -127,13 +127,13 @@ export default function GamificationPage() {
         finally { setLoading(false); }
     };
 
-    // ── Pre-finish logic to clear intervals ──────────────────────────────────
+    // -- Pre-finish logic to clear intervals ----------------------------------
     // Used by Puzzle when solved early, or Social when finished early
     const handleEarlyFinish = () => {
         if (isCapturing) finishSession(true);
     };
 
-    // ── Countdown ─────────────────────────────────────────────────────────────
+    // -- Countdown ------------------------------------------------------------─
     const startCountdown = () => {
         setCountDown(3);
         const t = setInterval(() => {
@@ -219,7 +219,7 @@ export default function GamificationPage() {
     // ══════════════════════════════════════════════════════════════════════════
     if (step === 'item' && selectedCategory) {
         const cat = selectedCategory;
-        // Social: auto-start handled by useEffect above — show loader
+        // Social: auto-start handled by useEffect above -- show loader
         if (cat.id === 'social') {
             return (
                 <div className="min-h-screen flex items-center justify-center bg-indigo-50 p-4">
@@ -283,7 +283,7 @@ export default function GamificationPage() {
     }
 
     // ══════════════════════════════════════════════════════════════════════════
-    // STEP: CAPTURE — full-screen stimulus + PIP camera bottom-left
+    // STEP: CAPTURE -- full-screen stimulus + PIP camera bottom-left
     // ══════════════════════════════════════════════════════════════════════════
     if (step === 'capture') return (
         <div className="fixed inset-0 bg-black overflow-hidden">
@@ -294,7 +294,7 @@ export default function GamificationPage() {
                 </div>
             )}
 
-            {/* ── Full-screen stimulus ── */}
+            {/* -- Full-screen stimulus -- */}
             <div className="absolute inset-0 w-full h-full">
                 {selectedCategory?.id === 'puzzle' && selectedItem && (
                     <PuzzleGame theme={selectedItem.id as 'animals' | 'faces' | 'fruits'} onSolve={handleEarlyFinish} />
@@ -317,7 +317,7 @@ export default function GamificationPage() {
                 </div>
             )}
 
-            {/* PIP Camera — bottom-left */}
+            {/* PIP Camera -- bottom-left */}
             <div className="absolute bottom-6 left-6 z-30 w-48 h-36 md:w-56 md:h-44 rounded-2xl overflow-hidden border-4 border-white shadow-2xl">
                 <CameraCapture onCapture={handleFrameCapture} isCapturing={isCapturing} interval={500} />
                 {lastAnalysis && (
@@ -330,7 +330,7 @@ export default function GamificationPage() {
                 )}
             </div>
 
-            {/* Progress bar — bottom-centre */}
+            {/* Progress bar -- bottom-centre */}
             {isCapturing && (
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 w-72 md:w-96">
                     <div className="h-3 bg-white/20 rounded-full overflow-hidden">

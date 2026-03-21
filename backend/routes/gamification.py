@@ -120,7 +120,7 @@ CALMING_VIDEOS = {
     ]
 }
 
-# ── ASD-friendly CARTOON videos ──────────────────────────────────────────────
+# -- ASD-friendly CARTOON videos ----------------------------------------------
 # To customize: replace the 'id' string with the 11-character YouTube video ID
 # For example, in https://www.youtube.com/watch?v=XqZsoesa55w, the ID is 'XqZsoesa55w'
 CARTOON_VIDEOS = [
@@ -128,14 +128,14 @@ CARTOON_VIDEOS = [
     {'id': 'FDxk0bmShBU', 'title': 'Peppa Pig Episodes 🐷',      'category': 'cartoon'},
 ]
 
-# ── MUSIC videos ─────────────────────────────────────────────────────────────
+# -- MUSIC videos ------------------------------------------------------------─
 # To customize: replace the 'id' string with the 11-character YouTube video ID
 MUSIC_VIDEOS = [
     {'id': 'jbBbRjs_niM', 'title': 'Wheels on the Bus 🚌',          'category': 'music'},
     {'id': 'n38kGst16sI', 'title': 'Twinkle Twinkle Little Star ⭐', 'category': 'music'},
 ]
 
-# ── Puzzle themes (handled client-side) ──────────────────────────────────────
+# -- Puzzle themes (handled client-side) --------------------------------------
 PUZZLE_THEMES = [
     {'id': 'animals', 'title': 'Animal Match 🐶',  'description': 'Match the animal grid!'},
     {'id': 'faces',   'title': 'Find the Face 😊', 'description': 'Find the correct emotion!'},
@@ -306,7 +306,7 @@ def get_activities():
                 'id': 'puzzle',
                 'title': 'Puzzle Game',
                 'emoji': '🧩',
-                'description': 'Fun swap-puzzle — match the pictures!',
+                'description': 'Fun swap-puzzle -- match the pictures!',
                 'color': 'from-indigo-500 to-purple-600',
                 'items': PUZZLE_THEMES,
             },

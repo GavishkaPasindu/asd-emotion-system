@@ -18,23 +18,23 @@ Download from Kaggle: https://www.kaggle.com/datasets/hasibur013/autism-facial-e
 Standardized Extraction Path: `C:\Users\pc\Desktop\datasetnew\asd_data`
 ```
 asd_data/
-├── ASD/          (ASD images)
-└── NON_ASD/      (Non-ASD images)
+├-- ASD/          (ASD images)
+└-- NON_ASD/      (Non-ASD images)
 ```
 
 #### Emotion Recognition Dataset
 Standardized Extraction Path: `C:\Users\pc\Desktop\datasetnew\emotion_data`
 ```
 emotion_data/
-├── train/
-│   ├── anger/
-│   ├── fear/
-│   ├── joy/
-│   ├── sadness/
-│   ├── surprise/
-│   └── Natural/
-└── test/
-    └── (same structure)
+├-- train/
+│   ├-- anger/
+│   ├-- fear/
+│   ├-- joy/
+│   ├-- sadness/
+│   ├-- surprise/
+│   └-- Natural/
+└-- test/
+    └-- (same structure)
 ```
 
 ## Training the Models
@@ -135,10 +135,10 @@ Start the frontend and upload images to test the full system
 After successful training, you should have:
 ```
 trained_models/
-├── best_asd_model.h5              # ASD detection model (TensorFlow)
-├── emotion_model_complete.pt       # Emotion recognition model (PyTorch)
-├── asd_training_history.png        # Training plots
-└── emotion_training_history.png    # Training plots
+├-- best_asd_model.h5              # ASD detection model (TensorFlow)
+├-- emotion_model_complete.pt       # Emotion recognition model (PyTorch)
+├-- asd_training_history.png        # Training plots
+└-- emotion_training_history.png    # Training plots
 ```
 
 ## Notes

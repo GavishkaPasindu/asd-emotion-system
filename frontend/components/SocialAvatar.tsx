@@ -10,7 +10,7 @@ const PROMPTS = [
     { text: "What's your favourite colour? 🌈", emoji: "🌈", delay: 32000 },
     { text: "Can you clap your hands? 👏👏", emoji: "👏", delay: 40000 },
     { text: "You are doing SO well! ⭐", emoji: "⭐", delay: 48000 },
-    { text: "One more — give me a thumbs up! 👍", emoji: "👍", delay: 56000 },
+    { text: "One more -- give me a thumbs up! 👍", emoji: "👍", delay: 56000 },
 ];
 
 export default function SocialAvatar() {
@@ -57,7 +57,7 @@ export default function SocialAvatar() {
                             <div className="w-8 h-5 rounded-full bg-pink-300 opacity-60" />
                             <div className="w-8 h-5 rounded-full bg-pink-300 opacity-60" />
                         </div>
-                        {/* Mouth — big smile */}
+                        {/* Mouth -- big smile */}
                         <div className="absolute top-28 w-20 h-10 border-b-8 border-gray-800 rounded-b-full" />
                     </div>
 

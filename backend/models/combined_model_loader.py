@@ -1,13 +1,13 @@
 """
-Combined Model Loader ΓÇö WITH BUILT-IN XAI (Grad-CAM)
+Combined Model Loader -- WITH BUILT-IN XAI (Grad-CAM)
 ====================================================
 Loads both ASD and Emotion .h5 files trained in Google Colab.
 Supports: VGG16, VGG19, ResNet50, ResNet50V2, InceptionV3
 
-XAI is a CORE FEATURE ΓÇö every prediction includes a Grad-CAM heatmap.
-predict_asd_with_xai()       ΓåÆ ASD prediction + heatmap + overlay
-predict_emotion_with_xai()   ΓåÆ Emotion prediction + heatmap + overlay
-predict_combined_with_xai()  ΓåÆ Both, one call
+XAI is a CORE FEATURE -- every prediction includes a Grad-CAM heatmap.
+predict_asd_with_xai()       -> ASD prediction + heatmap + overlay
+predict_emotion_with_xai()   -> Emotion prediction + heatmap + overlay
+predict_combined_with_xai()  -> Both, one call
 """
 
 import os
@@ -19,7 +19,7 @@ import logging
 import numpy as np
 import cv2
 
-# ΓöÇΓöÇ Keras version compatibility fix ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+# -- Keras version compatibility fix ------------------------------------------
 # Old models saved with Keras < 2.12 use 'batch_shape' in InputLayer config.
 # New Keras uses 'shape' instead. This shim makes both work transparently.
 try:
@@ -48,18 +48,18 @@ from typing import Dict, List, Optional, Tuple
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# ΓöÇΓöÇ Default class labels ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+# -- Default class labels ------------------------------------------------------
 # Emotion model trained on ASD children faces with 4 reaction classes.
 # fear removed (insufficient samples); disgust/happy/neutral not in scope.
 DEFAULT_EMOTION_CLASSES = ['anger', 'joy', 'sadness', 'surprise']
 
 # ASD classes follow Keras flow_from_directory alphabetical order:
 # ASD=0, Non_ASD=1
-# Sigmoid output: value > 0.5  ΓåÆ predicted class index 1 ΓåÆ Non_ASD
-#                 value <= 0.5 ΓåÆ predicted class index 0 ΓåÆ ASD
+# Sigmoid output: value > 0.5  -> predicted class index 1 -> Non_ASD
+#                 value <= 0.5 -> predicted class index 0 -> ASD
 DEFAULT_ASD_CLASSES = ['ASD', 'Non_ASD']
 
-# ΓöÇΓöÇ Known last conv layers per architecture (for reliable Grad-CAM) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+# -- Known last conv layers per architecture (for reliable Grad-CAM) ----------
 # These are the last convolutional / feature layer in each backbone.
 # Grad-CAM targets this layer to produce the attention heatmap.
 LAST_CONV_LAYERS = {
@@ -72,11 +72,11 @@ LAST_CONV_LAYERS = {
     'inceptionv3':    'mixed10',
 }
 
-# ΓöÇΓöÇ XAI colormap (JET = standard Grad-CAM coloring) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+# -- XAI colormap (JET = standard Grad-CAM coloring) --------------------------
 GRADCAM_COLORMAP = cv2.COLORMAP_JET
 
 
-# ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+# ------------------------------------------------------------------------------
 class CombinedModelLoader:
     """
     Loads a pair of .h5 models (ASD + Emotion) trained in Google Colab.
@@ -114,7 +114,7 @@ class CombinedModelLoader:
 
         self._load_models()
 
-    # ΓöÇΓöÇΓöÇ Label helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    # ---- Label helpers --------------------------------------------------------
 
     def _load_labels(self, path: Optional[str], defaults: List[str]) -> List[str]:
         if path and os.path.exists(path):
@@ -130,7 +130,7 @@ class CombinedModelLoader:
         logger.info(f"  [INFO] Using default labels: {defaults}")
         return defaults
 
-    # ΓöÇΓöÇΓöÇ Model loading ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    # ---- Model loading --------------------------------------------------------
 
     def _load_models(self):
         for attr, path, label in [
@@ -160,7 +160,7 @@ class CombinedModelLoader:
         import h5py, json, tempfile, shutil
 
         def _fix_config(cfg):
-            """Recursively fix Keras 3 ΓåÆ Keras 2 config incompatibilities:
+            """Recursively fix Keras 3 -> Keras 2 config incompatibilities:
             1. InputLayer 'batch_shape' -> 'batch_input_shape'
             2. DTypePolicy dict objects -> plain string (e.g. {'class_name':'DTypePolicy','config':{'name':'float32'}} -> 'float32')
             """
@@ -171,7 +171,7 @@ class CombinedModelLoader:
                     if 'batch_shape' in c:
                         c['batch_input_shape'] = c.pop('batch_shape')
 
-                # Fix 2: DTypePolicy dict ΓåÆ plain string, applied to any key
+                # Fix 2: DTypePolicy dict -> plain string, applied to any key
                 for key in list(cfg.keys()):
                     val = cfg[key]
                     if (isinstance(val, dict) and
@@ -184,14 +184,14 @@ class CombinedModelLoader:
                 for item in cfg:
                     _fix_config(item)
 
-        # ΓöÇΓöÇ Strategy 1: plain load (works if Keras versions match) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+        # -- Strategy 1: plain load (works if Keras versions match) ----------
         try:
             logger.info(f"Loading {label} model (strategy 1 - direct): {path}")
             return keras.models.load_model(path, compile=False)
         except Exception as e1:
             logger.warning(f"  Strategy 1 failed: {e1}")
 
-        # ΓöÇΓöÇ Strategy 2: patch the H5 model_config JSON and reload ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+        # -- Strategy 2: patch the H5 model_config JSON and reload ------------
         try:
             logger.info(f"Loading {label} model (strategy 2 - H5 config patch): {path}")
             # Copy to a temp file so we don't modify the original
@@ -218,7 +218,7 @@ class CombinedModelLoader:
             except Exception:
                 pass
 
-        # ΓöÇΓöÇ Strategy 3: build model from JSON config + load weights separately
+        # -- Strategy 3: build model from JSON config + load weights separately
         try:
             logger.info(f"Loading {label} model (strategy 3 - from_json + weights): {path}")
             with h5py.File(path, 'r') as f:
@@ -235,7 +235,7 @@ class CombinedModelLoader:
             logger.warning(f"  Strategy 3 failed: {e3}")
 
 
-        # ΓöÇΓöÇ Strategy 4: Rebuild architecture + load weights (Keras 3 ΓåÆ Keras 2) ΓöÇΓöÇ
+        # -- Strategy 4: Rebuild architecture + load weights (Keras 3 -> Keras 2) --
         # This works because weights are always cross-version compatible.
         try:
             logger.info(f"Loading {label} model (strategy 4 - rebuild+weights): {path}")
@@ -268,7 +268,7 @@ class CombinedModelLoader:
             'inceptionv3': (keras.applications.InceptionV3, 'mixed10'),
         }
         if model_type not in BACKBONES:
-            logger.warning(f"Unknown model type '{model_type}' for rebuild ΓÇö defaulting to resnet50v2")
+            logger.warning(f"Unknown model type '{model_type}' for rebuild -- defaulting to resnet50v2")
             model_type = 'resnet50v2'
 
         BackboneCls, _ = BACKBONES[model_type]
@@ -285,9 +285,9 @@ class CombinedModelLoader:
         x = base.output
         x = keras.layers.GlobalAveragePooling2D()(x)
 
-        # ── All "Improved" Colab notebooks use this 2-layer Dense head ──────
-        # ASD head  : Dense(512,relu,name=asd_dense1) → BN(asd_bn1) → Drop(0.5)
-        #             Dense(256,relu,name=asd_dense2) → BN(asd_bn2) → Drop(0.4)
+        # -- All "Improved" Colab notebooks use this 2-layer Dense head ------
+        # ASD head  : Dense(512,relu,name=asd_dense1) -> BN(asd_bn1) -> Drop(0.5)
+        #             Dense(256,relu,name=asd_dense2) -> BN(asd_bn2) -> Drop(0.4)
         #             Dense(1,sigmoid,name=asd_output)
         # Emotion   : same pattern with emo_ prefix, softmax output with NC classes
         # Using EXACT names is CRITICAL for load_weights(by_name=True) to work.
@@ -323,7 +323,7 @@ class CombinedModelLoader:
           2. Scan nested sub-models for last spatial conv/activation layer
           3. Scan top-level layers in reverse for last conv/spatial layer
         """
-        # Architecture-specific candidate lists ΓÇö ordered from best to fallback
+        # Architecture-specific candidate lists -- ordered from best to fallback
         CANDIDATE_LAYERS = {
             'vgg16':            ['block5_conv3', 'block5_conv2', 'block5_conv1'],
             'vgg19':            ['block5_conv4', 'block5_conv3'],
@@ -385,7 +385,7 @@ class CombinedModelLoader:
                     return result
         return None
 
-    # ΓöÇΓöÇΓöÇ Image preprocessing ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    # ---- Image preprocessing --------------------------------------------------
 
     def preprocess(self, image_input) -> Tuple[np.ndarray, Image.Image]:
         """
@@ -406,7 +406,7 @@ class CombinedModelLoader:
         pil_image = Image.fromarray(img_rgb)
         resized   = cv2.resize(img_rgb, (self.img_size, self.img_size))
         
-        # ── Preprocessing (Matching Colab Notebooks) ──────────────────────────
+        # -- Preprocessing (Matching Colab Notebooks) --------------------------
         # All models were trained with simple 1/255 scaling and RGB color space.
         # We MUST match this exactly to get identical results to Colab.
         
@@ -421,7 +421,7 @@ class CombinedModelLoader:
             
         return arr, pil_image
 
-    # ΓöÇΓöÇΓöÇ Grad-CAM XAI core ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    # ---- Grad-CAM XAI core ----------------------------------------------------
 
     def _generate_gradcam(
         self,
@@ -436,15 +436,15 @@ class CombinedModelLoader:
         Raises ValueError if heatmap cannot be generated.
         """
         if layer_name is None:
-            logger.warning(f"No XAI layer for {self.model_type} ΓÇö returning blank heatmap")
+            logger.warning(f"No XAI layer for {self.model_type} -- returning blank heatmap")
             # Return a neutral grey heatmap so predictions still work
             return np.full((self.img_size, self.img_size), 0.5, dtype=np.float32)
 
-        # Build a grad-model: input ΓåÆ (conv output, final predictions)
+        # Build a grad-model: input -> (conv output, final predictions)
         # We need to handle the case where the target layer is inside a nested sub-model.
         target_layer = self._get_layer_from_model(model, layer_name)
         if target_layer is None:
-            logger.warning(f"Layer '{layer_name}' not found ΓÇö returning blank heatmap")
+            logger.warning(f"Layer '{layer_name}' not found -- returning blank heatmap")
             return np.full((self.img_size, self.img_size), 0.5, dtype=np.float32)
 
         # Strategy A: Build grad model directly if layer is in outer model
@@ -455,7 +455,7 @@ class CombinedModelLoader:
             )
         except Exception:
             # Strategy B: The layer is inside a nested sub-model.
-            # Build: input ΓåÆ nested_sub_model ΓåÆ target layer output; parallel final output
+            # Build: input -> nested_sub_model -> target layer output; parallel final output
             try:
                 nested_model = None
                 for layer in model.layers:
@@ -474,7 +474,7 @@ class CombinedModelLoader:
                     outputs=[inner_target.output, model.output]
                 )
             except Exception as e2:
-                logger.warning(f"Grad-CAM sub-model build failed: {e2} ΓÇö returning blank heatmap")
+                logger.warning(f"Grad-CAM sub-model build failed: {e2} -- returning blank heatmap")
                 return np.full((self.img_size, self.img_size), 0.5, dtype=np.float32)
 
         img_tensor = tf.cast(img_array, tf.float32)
@@ -498,19 +498,22 @@ class CombinedModelLoader:
                 conv_outputs = conv_outputs[0]
 
             if is_binary:
-                # Binary: gradient w.r.t. ASD probability
+                # -- Binary: gradient w.r.t. specific class (Matching Colab) --
+                # In Colab asd_tr.class_indices = {'ASD': 0, 'Non_ASD': 1}
+                # preds[:, 0] is probability of Non_ASD. 
+                # We use this to match Colab behavior exactly.
                 loss = predictions[:, 0]
             else:
-                # Multi-class: gradient w.r.t. predicted class
+                # -- Multi-class: gradient w.r.t. predicted class --
                 class_idx = tf.argmax(predictions[0])
                 loss = predictions[:, class_idx]
 
         # Gradients of loss w.r.t. conv feature maps
         grads = tape.gradient(loss, conv_outputs)
         if grads is None:
-            raise ValueError("Gradient is None ΓÇö model may not be differentiable at target layer")
+            raise ValueError("Gradient is None -- model may not be differentiable at target layer")
 
-        # Average gradients over spatial dims ΓåÆ per-channel weights
+        # Average gradients over spatial dims -> per-channel weights
         pooled_grads = tf.reduce_mean(grads, axis=[0, 1, 2])
 
         # Weighted sum of feature maps
@@ -522,7 +525,7 @@ class CombinedModelLoader:
         heatmap = tf.nn.relu(heatmap)
         max_val = tf.reduce_max(heatmap)
         if max_val == 0:
-            logger.warning("Grad-CAM: zero heatmap ΓÇö model may be overfit or image is unusual")
+            logger.warning("Grad-CAM: zero heatmap -- model may be overfit or image is unusual")
             heatmap_np = np.zeros(heatmap.shape.as_list(), dtype=np.float32)
         else:
             heatmap_np = (heatmap / max_val).numpy()
@@ -558,10 +561,10 @@ class CombinedModelLoader:
         heatmap_colored = cv2.applyColorMap(heatmap_uint8, GRADCAM_COLORMAP)
         heatmap_colored = cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB)
 
-        # Overlay (70% original, 30% heatmap for clear visibility)
+        # Overlay (50% original, 50% heatmap to match Colab alpha=0.5)
         overlay = cv2.addWeighted(
-            orig_arr.astype(np.float32),     0.6,
-            heatmap_colored.astype(np.float32), 0.4,
+            orig_arr.astype(np.float32),        0.5,
+            heatmap_colored.astype(np.float32), 0.5,
             0
         ).astype(np.uint8)
 
@@ -575,7 +578,7 @@ class CombinedModelLoader:
 
 
 
-    # ΓöÇΓöÇΓöÇ MediaPipe face-region definitions ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    # ---- MediaPipe face-region definitions ----------------------------------
     # Landmark indices per region (MediaPipe 468-point face mesh)
     _MP_REGIONS = {
         'Forehead':      [10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377],
@@ -633,7 +636,7 @@ class CombinedModelLoader:
                     'face_landmarker/float16/1/face_landmarker.task',
                     model_path
                 )
-                logger.info('  face_landmarker.task downloaded Γ£ô')
+                logger.info('  face_landmarker.task downloaded [CHECK]')
 
             base_opts = mp_python.BaseOptions(model_asset_path=model_path)
             options   = mp_vision.FaceLandmarkerOptions(
@@ -651,7 +654,7 @@ class CombinedModelLoader:
             result   = detector.detect(mp_image)
 
             if not result.face_landmarks:
-                logger.info('  [MediaPipe] No face detected ΓåÆ fallback boxes')
+                logger.info('  [MediaPipe] No face detected -> fallback boxes')
                 return self._make_fallback_masks(h, w)
 
             lm     = result.face_landmarks[0]
@@ -671,7 +674,7 @@ class CombinedModelLoader:
             return masks
 
         except Exception as e:
-            logger.warning(f'  [MediaPipe] Error: {e} ΓåÆ fallback boxes')
+            logger.warning(f'  [MediaPipe] Error: {e} -> fallback boxes')
             return self._make_fallback_masks(h, w)
 
     def _make_fallback_masks(self, h: int, w: int) -> dict:
@@ -699,7 +702,7 @@ class CombinedModelLoader:
             }
         """
         try:
-            img_rgb  = np.array(pil_image)          # H├ùW├ù3  uint8
+            img_rgb  = np.array(pil_image)          # HxWx3  uint8
             h, w     = img_rgb.shape[:2]
 
             # Resize heatmap to match image
@@ -707,7 +710,7 @@ class CombinedModelLoader:
 
             masks    = self._get_mp_masks(img_rgb, h, w)
 
-            # ΓöÇΓöÇ Score each region ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+            # -- Score each region ------------------------------------------
             cam_mean = float(heatmap.mean()) + 1e-8
             scores   = {}
             for rn, mask in masks.items():
@@ -721,7 +724,15 @@ class CombinedModelLoader:
                 sorted(scores.items(), key=lambda x: x[1], reverse=True)
             )
 
-            # ΓöÇΓöÇ Build color-annotated face overlay ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+            # -- Add Eye Symmetry (Matching Colab clinical_xai_v3) ----------
+            le = scores.get("Left Eye", 0.0)
+            re = scores.get("Right Eye", 0.0)
+            if (le + re) > 1e-8:
+                scores_sorted["Eye Symmetry"] = round(1.0 - abs(le - re) / (le + re), 2)
+            else:
+                scores_sorted["Eye Symmetry"] = 1.0
+
+            # -- Build color-annotated face overlay --------------------------
             overlay = img_rgb.copy()
             THR     = 0.80   # highlight regions above this threshold
 
@@ -772,7 +783,7 @@ class CombinedModelLoader:
         pil_image.save(buf, format='PNG')
         return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
 
-    # ΓöÇΓöÇΓöÇ XAI explanation text ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    # ---- XAI explanation text --------------------------------------------------
 
     def _asd_explanation(self, predicted: str, confidence: float) -> str:
         conf_pct = f"{confidence * 100:.1f}%"
@@ -799,11 +810,11 @@ class CombinedModelLoader:
         return (
             f"Primary emotion detected: {emotion.upper()} ({conf_pct} confidence). "
             f"Top emotions: {top_str}. "
-            f"The heatmap highlights the facial regions ΓÇö particularly eyes, brows, "
-            f"and mouth ΓÇö that most strongly influenced this emotion classification."
+            f"The heatmap highlights the facial regions -- particularly eyes, brows, "
+            f"and mouth -- that most strongly influenced this emotion classification."
         )
 
-    # ΓöÇΓöÇΓöÇ Public prediction API ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    # ---- Public prediction API ------------------------------------------------
 
     def predict_asd(self, image_input) -> Dict:
         """ASD prediction only (no XAI)."""
@@ -815,7 +826,7 @@ class CombinedModelLoader:
 
         # Sigmoid: output is P(class_index_1) because keras binary_crossentropy
         # trains toward label=1 (Non_ASD when flow_from_directory sorts alphabetically:
-        # ASD=0, Non_ASD=1).  So raw[0][0] > 0.5 ΓåÆ Non_ASD.
+        # ASD=0, Non_ASD=1).  So raw[0][0] > 0.5 -> Non_ASD.
         sigmoid_val  = float(raw[0][0])
         prob_non_asd = sigmoid_val
         prob_asd     = 1.0 - sigmoid_val
@@ -865,7 +876,7 @@ class CombinedModelLoader:
             "model_type": self.model_type,
         }
 
-    # ΓöÇΓöÇ WITH XAI ΓÇö these are the primary methods for the API ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    # -- WITH XAI -- these are the primary methods for the API ------------------
 
     def predict_asd_with_xai(self, image_input) -> Dict:
         """
@@ -877,22 +888,22 @@ class CombinedModelLoader:
 
         img_array, pil_image = self.preprocess(image_input)
 
-        # ΓöÇΓöÇ Prediction
+        # -- Prediction
         raw          = self.asd_model.predict(img_array, verbose=0)
-        # Sigmoid > 0.5 ΓåÆ Non_ASD (class index 1); <= 0.5 ΓåÆ ASD (class index 0)
+        # Sigmoid > 0.5 -> Non_ASD (class index 1); <= 0.5 -> ASD (class index 0)
         sigmoid_val  = float(raw[0][0])
         prob_non_asd = sigmoid_val
         prob_asd     = 1.0 - sigmoid_val
         predicted    = self.asd_classes[1] if sigmoid_val > 0.5 else self.asd_classes[0]
         confidence   = max(prob_asd, prob_non_asd)
 
-        # ΓöÇΓöÇ XAI: Grad-CAM
+        # -- XAI: Grad-CAM
         heatmap = self._generate_gradcam(
             self.asd_model, img_array, self._asd_xai_layer, is_binary=True
         )
         heatmap_b64, overlay_b64 = self._heatmap_to_outputs(heatmap, pil_image)
 
-        # ΓöÇΓöÇ XAI: MediaPipe face-region attention
+        # -- XAI: MediaPipe face-region attention
         face_region = self._generate_face_region_attention(pil_image, heatmap)
 
         return {
@@ -925,7 +936,7 @@ class CombinedModelLoader:
 
         img_array, pil_image = self.preprocess(image_input)
 
-        # ΓöÇΓöÇ Prediction
+        # -- Prediction
         raw = self.emotion_model.predict(img_array, verbose=0)[0]
 
         pred_idx    = int(np.argmax(raw))
@@ -943,13 +954,13 @@ class CombinedModelLoader:
             for e, p in sorted(probs.items(), key=lambda x: x[1], reverse=True)[:3]
         ]
 
-        # ΓöÇΓöÇ XAI: Grad-CAM
+        # -- XAI: Grad-CAM
         heatmap = self._generate_gradcam(
             self.emotion_model, img_array, self._emotion_xai_layer, is_binary=False
         )
         heatmap_b64, overlay_b64 = self._heatmap_to_outputs(heatmap, pil_image)
 
-        # ΓöÇΓöÇ XAI: MediaPipe face-region attention
+        # -- XAI: MediaPipe face-region attention
         face_region = self._generate_face_region_attention(pil_image, heatmap)
 
         return {
@@ -990,7 +1001,7 @@ class CombinedModelLoader:
             gray, scaleFactor=1.1, minNeighbors=5, minSize=(60, 60)
         )
         if len(faces) == 0:
-            return img_bgr  # no face found ΓÇö use full frame as fallback
+            return img_bgr  # no face found -- use full frame as fallback
 
         # Pick the largest face
         x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
@@ -1003,7 +1014,7 @@ class CombinedModelLoader:
 
     def predict_emotion_fast(self, image_input) -> Dict:
         """
-        Lightweight emotion-only prediction with face detection ΓÇö NO XAI, NO Grad-CAM.
+        Lightweight emotion-only prediction with face detection -- NO XAI, NO Grad-CAM.
         Crops the face before inference so the model sees only the face, not the background.
         Use this for real-time frame capture (gamification) where speed matters.
         """
@@ -1019,14 +1030,14 @@ class CombinedModelLoader:
         else:
             raise ValueError("image_input must be bytes or numpy array")
 
-        # ΓöÇΓöÇ Crop face before feeding to model ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+        # -- Crop face before feeding to model --------------------------------
         face_bgr  = self._crop_face(img_bgr)
         face_rgb  = cv2.cvtColor(face_bgr, cv2.COLOR_BGR2RGB)
         resized   = cv2.resize(face_rgb, (self.img_size, self.img_size))
         arr       = resized.astype(np.float32) / 255.0
         img_array = np.expand_dims(arr, axis=0)
 
-        # ΓöÇΓöÇ Inference ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+        # -- Inference ----------------------------------------------------------
         raw = self.emotion_model.predict(img_array, verbose=0)[0]
 
         pred_idx   = int(np.argmax(raw))
@@ -1063,16 +1074,16 @@ class CombinedModelLoader:
 
         img_array, pil_image = self.preprocess(image_input)
 
-        # ΓöÇΓöÇ ASD prediction (STEP 1)
+        # -- ASD prediction (STEP 1)
         asd_raw      = self.asd_model.predict(img_array, verbose=0)
-        # Sigmoid > 0.5 ΓåÆ Non_ASD (class index 1 in alphabetical sort); <= 0.5 ΓåÆ ASD
+        # Sigmoid > 0.5 -> Non_ASD (class index 1 in alphabetical sort); <= 0.5 -> ASD
         sigmoid_val   = float(asd_raw[0][0])
         prob_non_asd  = sigmoid_val
         prob_asd      = 1.0 - sigmoid_val
         asd_predicted = self.asd_classes[1] if sigmoid_val > 0.5 else self.asd_classes[0]
         asd_confidence = max(prob_asd, prob_non_asd)
 
-        # ΓöÇΓöÇ Emotion prediction (STEP 2 ΓÇö runs on same image regardless of ASD result)
+        # -- Emotion prediction (STEP 2 -- runs on same image regardless of ASD result)
         emo_raw      = self.emotion_model.predict(img_array, verbose=0)[0]
         pred_idx     = int(np.argmax(emo_raw))
         pred_emo     = (self.emotion_classes[pred_idx]
@@ -1088,7 +1099,7 @@ class CombinedModelLoader:
             for e, p in sorted(probs.items(), key=lambda x: x[1], reverse=True)[:3]
         ]
 
-        # ΓöÇΓöÇ XAI: Grad-CAM for both models
+        # -- XAI: Grad-CAM for both models
         asd_heatmap = self._generate_gradcam(
             self.asd_model, img_array, self._asd_xai_layer, is_binary=True
         )
@@ -1099,7 +1110,7 @@ class CombinedModelLoader:
         asd_hm_b64,  asd_ov_b64  = self._heatmap_to_outputs(asd_heatmap, pil_image)
         emo_hm_b64,  emo_ov_b64  = self._heatmap_to_outputs(emo_heatmap, pil_image)
 
-        # ΓöÇΓöÇ Face region attention (MediaPipe) for both models
+        # -- Face region attention (MediaPipe) for both models
         asd_face_region = self._generate_face_region_attention(pil_image, asd_heatmap)
         emo_face_region = self._generate_face_region_attention(pil_image, emo_heatmap)
 
@@ -1147,7 +1158,7 @@ class CombinedModelLoader:
             },
         }
 
-    # ΓöÇΓöÇ Legacy compatibility ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    # -- Legacy compatibility --------------------------------------------------
 
     def predict_asd(self, image_input) -> Dict:       # noqa: F811
         return self.predict_asd_with_xai(image_input)
@@ -1163,7 +1174,7 @@ class CombinedModelLoader:
         return self.asd_model is not None and self.emotion_model is not None
 
 
-# ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+# ------------------------------------------------------------------------------
 def load_best_available_model(
     trained_models_dir: str = "trained_models",
 ) -> Optional[CombinedModelLoader]:
@@ -1179,34 +1190,43 @@ def load_best_available_model(
         ("vgg16",       "vgg16_asd_model.h5",         "vgg16_emotion_model.h5",       224),
     ]
 
-    for model_type, asd_file, emo_file, img_size in priority:
-        asd_path = os.path.join(trained_models_dir, asd_file)
-        emo_path = os.path.join(trained_models_dir, emo_file)
+    for model_type, _, _, img_size in priority:
+        # Improved regex to find versioned files like 'resnet50v2_v3_asd_model.h5'
+        import glob
+        pattern_asd = os.path.join(trained_models_dir, f"{model_type}*asd*model.h5")
+        pattern_emo = os.path.join(trained_models_dir, f"{model_type}*emotion*model.h5")
+        
+        asd_files = sorted(glob.glob(pattern_asd), reverse=True) # take latest/highest version
+        emo_files = sorted(glob.glob(pattern_emo), reverse=True)
 
-        if not (os.path.exists(asd_path) and os.path.exists(emo_path)):
-            continue
+        if asd_files and emo_files:
+            asd_path = asd_files[0]
+            emo_path = emo_files[0]
+            
+            # Look for corresponding labels
+            asd_lbl = asd_path.replace(".h5", "_labels.json")
+            if not os.path.exists(asd_lbl):
+                asd_lbl = os.path.join(trained_models_dir, f"{model_type}_asd_labels.json")
+            
+            emo_lbl = emo_path.replace(".h5", "_labels.json")
+            if not os.path.exists(emo_lbl):
+                emo_lbl = os.path.join(trained_models_dir, f"{model_type}_emotion_labels.json")
 
-        asd_lbl = os.path.join(trained_models_dir, f"{model_type}_asd_labels.json")
-        emo_lbl = os.path.join(trained_models_dir, f"{model_type}_emotion_labels.json")
+            try:
+                loader = CombinedModelLoader(
+                    asd_model_path=asd_path,
+                    emotion_model_path=emo_path,
+                    model_type=model_type,
+                    asd_labels_path=asd_lbl     if os.path.exists(asd_lbl) else None,
+                    emotion_labels_path=emo_lbl if os.path.exists(emo_lbl) else None,
+                    img_size=img_size,
+                )
+                if loader.is_ready:
+                    logger.info(f"  [SUCCESS] Loaded {model_type.upper()}")
+                    return loader
+            except Exception as e:
+                logger.error(f"Failed to load {model_type}: {e}")
+                continue
 
-        try:
-            logger.info(f"Auto-loading {model_type.upper()} model pairΓÇª")
-            loader = CombinedModelLoader(
-                asd_model_path=asd_path,
-                emotion_model_path=emo_path,
-                model_type=model_type,
-                asd_labels_path=asd_lbl     if os.path.exists(asd_lbl) else None,
-                emotion_labels_path=emo_lbl if os.path.exists(emo_lbl) else None,
-                img_size=img_size,
-            )
-            if loader.is_ready:
-                logger.info(f"Γ£à Loaded {model_type.upper()} ΓÇö "
-                            f"ASD XAI layer: {loader._asd_xai_layer} | "
-                            f"Emotion XAI layer: {loader._emotion_xai_layer}")
-                return loader
-        except Exception as e:
-            logger.error(f"Failed to load {model_type}: {e}")
-            continue
-
-    logger.warning("ΓÜá No trained model pairs found in trained_models/")
+    logger.warning("  [WARNING] No trained model pairs found in trained_models/")
     return None

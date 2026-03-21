@@ -1,5 +1,5 @@
 """
-Prediction API Routes — XAI ALWAYS INCLUDED
+Prediction API Routes -- XAI ALWAYS INCLUDED
 ============================================
 XAI (Grad-CAM heatmaps) is included in EVERY prediction response.
 It is NOT optional and NOT silently dropped.
@@ -13,7 +13,7 @@ prediction_bp = Blueprint('prediction', __name__)
 
 from models.manager import model_manager
 
-# CombinedModelLoader instance — fallback if manager not used correctly
+# CombinedModelLoader instance -- fallback if manager not used correctly
 combined_model = None
 
 def init_combined_model(model):
@@ -55,7 +55,7 @@ def _read_image():
     image_bytes = file.read()
     has_face = _has_face(image_bytes)
     if not has_face:
-        print("DEBUG: Face detection found 0 faces — proceeding anyway (fail-open)")
+        print("DEBUG: Face detection found 0 faces -- proceeding anyway (fail-open)")
     
     print(f"DEBUG: Image read successfully, size: {len(image_bytes)} bytes")
     return image_bytes, None
@@ -83,19 +83,19 @@ def _has_face(image_bytes: bytes) -> bool:
         return True
 
 
-# ──────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
 @prediction_bp.route('/api/predict/asd', methods=['POST'])
 def predict_asd():
     """
     ASD Detection Endpoint
-    ─────────────────────
+    --------------------─
     POST /api/predict/asd
     Form-data: image (file)
 
     Response always includes:
       - predicted_class, confidence, probabilities
-      - xai.heatmap   (base64 PNG — JET colormap Grad-CAM)
-      - xai.overlay   (base64 PNG — heatmap overlaid on face)
+      - xai.heatmap   (base64 PNG -- JET colormap Grad-CAM)
+      - xai.overlay   (base64 PNG -- heatmap overlaid on face)
       - xai.explanation (human-readable text)
       - xai.target_layer (which conv layer Grad-CAM used)
     """
@@ -118,12 +118,12 @@ def predict_asd():
         return jsonify({'success': False, 'error': f'Prediction error: {str(e)}'}), 500
 
 
-# ──────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
 @prediction_bp.route('/api/predict/emotion', methods=['POST'])
 def predict_emotion():
     """
     Emotion Detection Endpoint
-    ──────────────────────────
+    --------------------------
     POST /api/predict/emotion
     Form-data: image (file)
 
@@ -150,12 +150,12 @@ def predict_emotion():
         return jsonify({'success': False, 'error': f'Prediction error: {str(e)}'}), 500
 
 
-# ──────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
 @prediction_bp.route('/api/predict/combined', methods=['POST'])
 def predict_combined():
     """
     Combined ASD + Emotion Detection Endpoint  ← MAIN ENDPOINT
-    ──────────────────────────────────────────
+    ------------------------------------------
     POST /api/predict/combined
     Form-data: image (file)
 
@@ -241,7 +241,7 @@ def validate_face(image_bytes):
 
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# ----------------------------------------------------------------------------─
 # Helper explanation functions are already defined in CombinedModelLoader,
 # so these redundant ones can be removed or kept as local utilities if needed.
 # For simplicity and to avoid confusion, we consolidate everything into the class.
