@@ -57,8 +57,8 @@ class ModelManager:
         logger.info(f"Initializing ModelManager with directory: {trained_models_dir}")
         self.models = {}
         
-        # Priority for the default model
-        priority = ["resnet50v2", "inceptionv3", "resnet50", "vgg19", "vgg16"]
+        # Priority for the default model - Consolidating to ResNet50V2 only
+        priority = ["resnet50v2"]
         
         for model_type in priority:
             asd_path, emo_path = self._find_model_files(trained_models_dir, model_type)
@@ -69,7 +69,7 @@ class ModelManager:
                 logger.info(f"    Emotion: {os.path.basename(emo_path)}")
                 try:
                     logger.info(f"Loading {model_type.upper()}...")
-                    img_size = 299 if model_type == 'inceptionv3' else 224
+                    img_size = 224 # Standard size for ResNet50V2
                     # Look for label files with the same prefix as the found model file
                     base_prefix = os.path.basename(asd_path).replace("_asd_model.h5", "")
                     asd_lbl = os.path.join(trained_models_dir, f"{base_prefix}_asd_labels.json")

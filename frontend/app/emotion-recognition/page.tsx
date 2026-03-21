@@ -6,21 +6,18 @@ import FileUpload from '../components/FileUpload';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ResultsDisplay from '../components/ResultsDisplay';
 import { api, PredictionResponse } from '@/lib/api';
-import { useModel } from '../context/ModelContext';
 
 export default function EmotionRecognitionPage() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<PredictionResponse | null>(null);
     const [availableLabels, setAvailableLabels] = useState<string[]>(['Joy', 'Sadness', 'Anger', 'Fear', 'Surprise', 'Neutral']);
-    const { selectedModel } = useModel();
 
     useEffect(() => {
         const fetchLabels = async () => {
             try {
                 const info = await api.getModelsInfo();
-                const modelKey = selectedModel?.toLowerCase() || info.default;
-                const labels = info.models[modelKey]?.emotion_classes;
+                const labels = info.models['resnet50v2']?.emotion_classes;
                 if (labels && labels.length > 0) {
                     setAvailableLabels(labels);
                 }
@@ -29,7 +26,7 @@ export default function EmotionRecognitionPage() {
             }
         };
         fetchLabels();
-    }, [selectedModel]);
+    }, []);
 
     const handleFileSelect = (file: File) => {
         setSelectedFile(file);
@@ -41,7 +38,7 @@ export default function EmotionRecognitionPage() {
 
         setLoading(true);
         try {
-            const prediction = await api.predictEmotion(selectedFile, true, selectedModel);
+            const prediction = await api.predictEmotion(selectedFile, true);
             setResult(prediction);
         } catch (error) {
             console.error('Analysis error:', error);

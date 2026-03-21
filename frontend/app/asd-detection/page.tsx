@@ -6,25 +6,22 @@ import FileUpload from '../components/FileUpload';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ResultsDisplay from '../components/ResultsDisplay';
 import { api, PredictionResponse } from '@/lib/api';
-import { useModel } from '../context/ModelContext';
 
 export default function ASDDetectionPage() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<PredictionResponse | null>(null);
-    const { selectedModel } = useModel();
 
     const handleFileSelect = (file: File) => {
         setSelectedFile(file);
         setResult(null);
     };
-
     const handleAnalyze = async () => {
         if (!selectedFile) return;
 
         setLoading(true);
         try {
-            const prediction = await api.predictASD(selectedFile, true, selectedModel);
+            const prediction = await api.predictASD(selectedFile, true);
             setResult(prediction);
         } catch (error) {
             console.error('Analysis error:', error);
@@ -46,16 +43,16 @@ export default function ASDDetectionPage() {
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[rgb(var(--color-primary)/0.1)] mb-4">
                         <Brain className="w-5 h-5 text-[rgb(var(--color-primary))]" />
                         <span className="text-sm font-medium text-[rgb(var(--color-primary))]">
-                            ASD Detection
+                            Developmental Screening
                         </span>
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-bold mb-4 text-[rgb(var(--color-text))]">
-                        Autism Spectrum Disorder Detection
+                        Child Development Analysis
                     </h1>
 
                     <p className="text-lg text-[rgb(var(--color-text-secondary))] max-w-2xl mx-auto">
-                        Upload an image for AI-powered ASD screening with explainable AI visualizations
+                        Upload an image for AI-powered developmental screening with explainable AI visualizations
                     </p>
                 </div>
 
@@ -79,7 +76,7 @@ export default function ASDDetectionPage() {
                                         className="btn-gradient w-full mt-6"
                                     >
                                         <Sparkles className="w-5 h-5 inline mr-2" />
-                                        Analyze for ASD
+                                        Run Screening
                                     </button>
                                 )}
                             </div>

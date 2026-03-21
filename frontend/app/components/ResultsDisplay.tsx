@@ -16,9 +16,9 @@ export default function ResultsDisplay({ result, type }: ResultsDisplayProps) {
     const [showPerformance, setShowPerformance] = useState(false);
 
     useEffect(() => {
-        // Fetch metrics for the selected model whenever it changes or a new result arrives
-        api.getModelMetrics(selectedModel).then(setMetrics).catch(console.error);
-    }, [selectedModel, result.success]);
+        // Fetch metrics for the model whenever a new result arrives
+        api.getModelMetrics().then(setMetrics).catch(console.error);
+    }, [result.success]);
 
     if (!result.success) {
         return (
@@ -39,7 +39,16 @@ export default function ResultsDisplay({ result, type }: ResultsDisplayProps) {
     }
 
     const confidence = Math.round(result.confidence * 100);
-    const prediction = type === 'asd' ? result.predicted_class : result.predicted_emotion;
+    let prediction = type === 'asd' ? result.predicted_class : result.predicted_emotion;
+
+    // Discreet mapping for screening results
+    if (type === 'asd') {
+        if (prediction === 'ASD') {
+            prediction = 'Support Recommended';
+        } else if (prediction === 'Non_ASD') {
+            prediction = 'Typical Development';
+        }
+    }
 
     return (
         <div className="space-y-6 animate-slide-up">
@@ -220,7 +229,7 @@ export default function ResultsDisplay({ result, type }: ResultsDisplayProps) {
                 <div className="card border-t-4 border-[rgb(var(--color-accent))] animate-slide-up">
                     <h4 className="font-semibold text-[rgb(var(--color-text))] mb-2 flex items-center gap-2">
                         <Activity className="w-5 h-5 text-[rgb(var(--color-accent))]" />
-                        {metrics.metrics[type]?.title} — Performance Matrix
+                        {type === 'asd' ? 'Behavioral Analysis' : metrics.metrics[type]?.title} — Performance Matrix
                     </h4>
                     <p className="text-xs text-[rgb(var(--color-text-secondary))] mb-6">
                         Verified results from the training phase for model: <span className="font-mono text-[rgb(var(--color-primary))]">{metrics.model_type}</span>

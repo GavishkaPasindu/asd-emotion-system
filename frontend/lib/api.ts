@@ -76,17 +76,13 @@ export const api = {
   /**
    * Predict ASD from an image
    */
-  async predictASD(image: File, useEnsemble: boolean = true, modelType?: string): Promise<PredictionResponse> {
+  async predictASD(image: File, useEnsemble: boolean = true): Promise<PredictionResponse> {
     const formData = new FormData();
     formData.append('image', image);
     formData.append('ensemble', useEnsemble.toString());
 
-    const headers: Record<string, string> = {};
-    if (modelType) headers['X-Model-Type'] = modelType;
-
     const response = await fetch(`${API_BASE_URL}/api/predict/asd`, {
       method: 'POST',
-      headers,
       body: formData,
     });
 
@@ -100,17 +96,13 @@ export const api = {
   /**
    * Predict emotion from an image
    */
-  async predictEmotion(image: File, useEnsemble: boolean = true, modelType?: string): Promise<PredictionResponse> {
+  async predictEmotion(image: File, useEnsemble: boolean = true): Promise<PredictionResponse> {
     const formData = new FormData();
     formData.append('image', image);
     formData.append('ensemble', useEnsemble.toString());
 
-    const headers: Record<string, string> = {};
-    if (modelType) headers['X-Model-Type'] = modelType;
-
     const response = await fetch(`${API_BASE_URL}/api/predict/emotion`, {
       method: 'POST',
-      headers,
       body: formData,
     });
 
@@ -124,17 +116,13 @@ export const api = {
   /**
    * Get combined ASD and emotion prediction
    */
-  async predictCombined(image: File, useEnsemble: boolean = true, modelType?: string): Promise<CombinedPredictionResponse> {
+  async predictCombined(image: File, useEnsemble: boolean = true): Promise<CombinedPredictionResponse> {
     const formData = new FormData();
     formData.append('image', image);
     formData.append('ensemble', useEnsemble.toString());
 
-    const headers: Record<string, string> = {};
-    if (modelType) headers['X-Model-Type'] = modelType;
-
     const response = await fetch(`${API_BASE_URL}/api/predict/combined`, {
       method: 'POST',
-      headers,
       body: formData,
     });
 
@@ -148,10 +136,8 @@ export const api = {
   /**
    * Get analytics summary
    */
-  async getAnalyticsSummary(modelType?: string): Promise<AnalyticsSummary> {
+  async getAnalyticsSummary(): Promise<AnalyticsSummary> {
     const url = new URL(`${API_BASE_URL}/api/analytics/summary`);
-    if (modelType) url.searchParams.append('model_type', modelType);
-
     const response = await fetch(url.toString());
 
     if (!response.ok) {
@@ -233,10 +219,8 @@ export const api = {
   /**
    * Get performance metrics for the active model
    */
-  async getModelMetrics(modelType?: string): Promise<ModelMetricsResponse> {
+  async getModelMetrics(): Promise<ModelMetricsResponse> {
     const url = new URL(`${API_BASE_URL}/api/models/metrics`);
-    if (modelType) url.searchParams.append('model_type', modelType);
-
     const response = await fetch(url.toString());
     if (!response.ok) {
       throw new Error(`API Error: ${response.statusText}`);

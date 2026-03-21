@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-type ModelType = 'vgg16' | 'vgg19' | 'resnet50' | 'resnet50v2' | 'inceptionv3';
+type ModelType = 'resnet50v2';
 
 interface ModelContextType {
     selectedModel: ModelType;
@@ -12,10 +12,6 @@ interface ModelContextType {
 
 const availableModels: { id: ModelType; name: string }[] = [
     { id: 'resnet50v2', name: 'ResNet50V2 (Best Accuracy)' },
-    { id: 'inceptionv3', name: 'InceptionV3' },
-    { id: 'resnet50', name: 'ResNet50' },
-    { id: 'vgg19', name: 'VGG19' },
-    { id: 'vgg16', name: 'VGG16' },
 ];
 
 

@@ -257,19 +257,14 @@ class CombinedModelLoader:
         img_size   = self.img_size
         model_type = self.model_type.lower()
 
-        # Pick the backbone
+        # Consolidation: Support only ResNet50V2 for rebuilds
         BACKBONES = {
             'resnet50v2':  (keras.applications.ResNet50V2,  'post_bn'),
-            'resnet50':    (keras.applications.ResNet50,    'conv5_block3_out'),
-            'vgg16':       (keras.applications.VGG16,       'block5_conv3'),
-            'vgg19':       (keras.applications.VGG19,       'block5_conv4'),
-            'inceptionv3': (keras.applications.InceptionV3, 'mixed10'),
         }
-        if model_type not in BACKBONES:
-            logger.warning(f"Unknown model type '{model_type}' for rebuild ΓÇö defaulting to resnet50v2")
-            model_type = 'resnet50v2'
-
-        BackboneCls, _ = BACKBONES[model_type]
+        
+        # Default to resnet50v2 if any unknown type is passed
+        model_type = 'resnet50v2'
+        BackboneCls, _ = BACKBONES['resnet50v2']
         try:
             base = BackboneCls(
                 include_top=False, weights=None,
@@ -322,13 +317,10 @@ class CombinedModelLoader:
           3. Scan top-level layers in reverse for last conv/spatial layer
         """
         # Architecture-specific candidate lists ΓÇö ordered from best to fallback
+        # Architecture-specific candidate lists (ResNet50V2 only)
         CANDIDATE_LAYERS = {
-            'vgg16':            ['block5_conv3', 'block5_conv2', 'block5_conv1'],
-            'vgg19':            ['block5_conv4', 'block5_conv3'],
-            'resnet50':         ['conv5_block3_out', 'conv5_block3_3_bn', 'conv5_block3_3_relu'],
             'resnet50v2':       ['conv5_block3_3_relu', 'post_bn', 'post_relu',
                                  'conv5_block3_out', 'conv5_block3_preact'],
-            'inceptionv3':      ['mixed10', 'mixed9', 'mixed8'],
         }
 
         candidates = CANDIDATE_LAYERS.get(self.model_type, [])

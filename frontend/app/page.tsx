@@ -5,8 +5,8 @@ export default function Home() {
   const features = [
     {
       icon: Brain,
-      title: 'ASD Detection',
-      description: 'Advanced AI model for autism spectrum disorder screening with high accuracy',
+      title: 'Developmental Screening',
+      description: 'Advanced AI model for child development condition screening with high accuracy',
       href: '/asd-detection',
       gradient: 'from-purple-500 to-blue-500',
     },
@@ -20,7 +20,7 @@ export default function Home() {
     {
       icon: Layers,
       title: 'Combined Analysis',
-      description: 'Comprehensive assessment combining ASD detection and emotion recognition',
+      description: 'Comprehensive assessment combining behavioral screening and emotion recognition',
       href: '/combined-analysis',
       gradient: 'from-blue-500 to-cyan-500',
     },
@@ -40,8 +40,8 @@ export default function Home() {
     },
     {
       icon: Smile, // Reusing Smile for now, or import Gamepad/Joystick if available
-      title: 'Gamified Screening',
-      description: 'Fun, child-friendly screening with cartoons and interactive elements',
+      title: 'Interactive Support',
+      description: 'Fun, child-friendly support with cartoons and interactive elements',
       href: '/gamification',
       gradient: 'from-yellow-400 to-orange-500',
     },
@@ -63,13 +63,13 @@ export default function Home() {
             </h1>
 
             <p className="text-xl md:text-2xl text-[rgb(var(--color-text-secondary))] mb-8 max-w-2xl mx-auto">
-              Advanced AI-powered system for autism spectrum disorder screening and real-time emotion analysis with explainable AI visualizations
+              Advanced AI-powered system for behavioral screening and real-time emotion analysis with explainable AI visualizations
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
               <Link href="/asd-detection" className="flex items-center justify-center px-8 py-4 rounded-full bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 hover:shadow-lg hover:-translate-y-1 transition-all">
                 <Brain className="w-5 h-5 mr-3" />
-                Start ASD Detection
+                Begin Screening
               </Link>
               <Link href="/emotion-recognition" className="flex items-center justify-center px-8 py-4 rounded-full bg-white text-gray-800 font-bold text-lg border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:shadow-lg hover:-translate-y-1 transition-all">
                 <Smile className="w-5 h-5 mr-3" />

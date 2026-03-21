@@ -6,13 +6,11 @@ import FileUpload from '../components/FileUpload';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ResultsDisplay from '../components/ResultsDisplay';
 import { api, CombinedPredictionResponse } from '@/lib/api';
-import { useModel } from '../context/ModelContext';
 
 export default function CombinedAnalysisPage() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<CombinedPredictionResponse | null>(null);
-    const { selectedModel } = useModel();
 
     const handleFileSelect = (file: File) => {
         setSelectedFile(file);
@@ -24,7 +22,7 @@ export default function CombinedAnalysisPage() {
 
         setLoading(true);
         try {
-            const prediction = await api.predictCombined(selectedFile, true, selectedModel);
+            const prediction = await api.predictCombined(selectedFile, true);
             setResult(prediction);
         } catch (error) {
             console.error('Analysis error:', error);
@@ -48,7 +46,7 @@ export default function CombinedAnalysisPage() {
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[rgb(var(--color-primary)/0.1)] to-[rgb(var(--color-accent)/0.1)] mb-4">
                         <Layers className="w-5 h-5 text-[rgb(var(--color-primary))]" />
                         <span className="text-sm font-medium text-gradient">
-                            Combined Analysis
+                            Comprehensive Analysis
                         </span>
                     </div>
 
@@ -57,7 +55,7 @@ export default function CombinedAnalysisPage() {
                     </h1>
 
                     <p className="text-lg text-[rgb(var(--color-text-secondary))] max-w-2xl mx-auto">
-                        Get both ASD detection and emotion recognition in a single analysis
+                        Get both behavioral screening and emotion recognition in a single analysis
                     </p>
                 </div>
 
@@ -79,7 +77,7 @@ export default function CombinedAnalysisPage() {
                                 className="btn-gradient w-full mt-6"
                             >
                                 <Sparkles className="w-5 h-5 inline mr-2" />
-                                Run Combined Analysis
+                                Run Full Analysis
                             </button>
                         )}
                     </div>
@@ -115,7 +113,7 @@ export default function CombinedAnalysisPage() {
                                     <div className="flex items-center gap-2 mb-4">
                                         <Brain className="w-6 h-6 text-[rgb(var(--color-primary))]" />
                                         <h3 className="text-2xl font-bold text-[rgb(var(--color-text))]">
-                                            ASD Detection
+                                            Behavioral Screening
                                         </h3>
                                     </div>
                                     <ResultsDisplay result={result.asd} type="asd" />
@@ -150,7 +148,7 @@ export default function CombinedAnalysisPage() {
                                 Ready for Comprehensive Analysis
                             </h3>
                             <p className="text-[rgb(var(--color-text-secondary))]">
-                                Upload an image to get both ASD detection and emotion recognition results
+                                Upload an image to get both behavioral screening and emotion recognition results
                             </p>
                         </div>
                     )}

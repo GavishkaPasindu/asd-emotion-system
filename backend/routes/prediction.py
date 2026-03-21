@@ -22,10 +22,8 @@ def init_combined_model(model):
     combined_model = model
 
 def _get_active_model():
-    """Dynamically resolve the model based on X-Model-Type header."""
-    requested_model = request.headers.get('X-Model-Type')
-    model = model_manager.get_model(requested_model)
-    print(f"DEBUG: Prediction route - Requested: {requested_model}, Resolved: {model.model_type if model else 'None'}")
+    """Consolidated to use the default model (ResNet50V2)."""
+    model = model_manager.get_model()
     if model is None:
         # Final fallback to whatever was initialized
         return combined_model

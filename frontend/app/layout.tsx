@@ -3,8 +3,8 @@ import "./globals.css";
 import Navigation from "./components/Navigation";
 
 export const metadata: Metadata = {
-  title: "ASD-Gamiscreen - Advanced Detection & Recognition",
-  description: "AI-powered ASD detection and emotion recognition with explainable AI visualizations",
+  title: "ASD-Gamiscreen - Advanced Behavioral Analysis",
+  description: "AI-powered developmental screening and emotion recognition with explainable AI visualizations",
 };
 
 import { ModelProvider } from "./context/ModelContext";

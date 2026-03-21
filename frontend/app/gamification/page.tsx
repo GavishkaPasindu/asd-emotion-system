@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import YouTubePlayer from '../../components/YouTubePlayer';
 import CameraCapture from '../../components/CameraCapture';
-import ASDFriendlyUI from '../../components/ASDFriendlyUI';
+import SupportiveUI from '../../components/SupportiveUI';
 import PuzzleGame from '../../components/PuzzleGame';
 import SocialAvatar from '../../components/SocialAvatar';
 import { Video, Award, ChevronLeft, Play } from 'lucide-react';
@@ -223,7 +223,7 @@ export default function GamificationPage() {
         if (cat.id === 'social') {
             return (
                 <div className="min-h-screen flex items-center justify-center bg-indigo-50 p-4">
-                    <ASDFriendlyUI type="loading" message="Getting ready..." />
+                    <SupportiveUI type="loading" message="Getting ready..." />
                 </div>
             );
         }
@@ -275,7 +275,7 @@ export default function GamificationPage() {
 
                 {loading && (
                     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm">
-                        <ASDFriendlyUI type="loading" message="Starting session..." />
+                        <SupportiveUI type="loading" message="Starting session..." />
                     </div>
                 )}
             </div>
@@ -290,7 +290,7 @@ export default function GamificationPage() {
             {/* Countdown overlay */}
             {countDown > 0 && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
-                    <ASDFriendlyUI type="countdown" count={countDown} />
+                    <SupportiveUI type="countdown" count={countDown} />
                 </div>
             )}
 
@@ -336,7 +336,7 @@ export default function GamificationPage() {
                     <div className="h-3 bg-white/20 rounded-full overflow-hidden">
                         <div className="h-full bg-gradient-to-r from-green-400 to-blue-500 animate-progress origin-left" style={{ animationDuration: '10s' }} />
                     </div>
-                    <p className="text-center text-white/60 mt-1 text-xs font-mono">Screening in progress...</p>
+                    <p className="text-center text-white/60 mt-1 text-xs font-mono">Developmental analysis in progress...</p>
                 </div>
             )}
         </div>
@@ -347,7 +347,7 @@ export default function GamificationPage() {
     // ══════════════════════════════════════════════════════════════════════════
     if (step === 'completed') return (
         <div className="min-h-screen bg-gradient-to-b from-blue-400 to-purple-500 flex items-center justify-center">
-            <ASDFriendlyUI type="success" />
+            <SupportiveUI type="success" />
         </div>
     );
 

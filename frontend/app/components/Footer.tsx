@@ -15,7 +15,7 @@ export default function Footer() {
                             ASD-Gamiscreen
                         </Link>
                         <p className="text-gray-500 max-w-sm text-sm leading-relaxed">
-                            Advanced AI-powered system for autism spectrum disorder screening and real-time emotion analysis with explainable AI visualizations.
+                            Advanced AI-powered system for developmental behavioral screening and real-time emotion analysis with explainable AI visualizations.
                         </p>
                         <div className="flex gap-4 pt-4">
                             <a href="#" className="p-2 bg-gray-50 text-gray-500 rounded-full hover:bg-blue-50 hover:text-blue-600 transition-colors">
@@ -38,7 +38,7 @@ export default function Footer() {
                         <ul className="space-y-3">
                             <li>
                                 <Link href="/asd-detection" className="text-gray-500 hover:text-blue-600 text-sm font-medium transition-colors">
-                                    ASD Detection
+                                    Developmental Screening
                                 </Link>
                             </li>
                             <li>
@@ -53,7 +53,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link href="/gamification" className="text-gray-500 hover:text-blue-600 text-sm font-medium transition-colors flex items-center gap-2">
-                                    Gamification <span className="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 text-[10px] uppercase font-bold tracking-wider">New</span>
+                                    Gamification Learning <span className="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 text-[10px] uppercase font-bold tracking-wider">New</span>
                                 </Link>
                             </li>
                         </ul>
@@ -90,7 +90,7 @@ export default function Footer() {
                         &copy; {currentYear} ASD-Gamiscreen. All rights reserved.
                     </p>
                     <p className="text-sm font-medium text-gray-400 flex items-center gap-1">
-                        Made with <Heart className="w-4 h-4 text-red-500 animate-pulse fill-red-500" /> for Autism Support
+                        Made with <Heart className="w-4 h-4 text-red-500 animate-pulse fill-red-500" /> for Supportive Progress
                     </p>
                 </div>
             </div>

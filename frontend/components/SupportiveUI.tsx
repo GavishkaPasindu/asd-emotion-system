@@ -3,13 +3,13 @@
 import React from "react";
 import { Star, Heart, Smile } from "lucide-react";
 
-interface ASDFriendlyUIProps {
+interface SupportiveUIProps {
     type?: "loading" | "success" | "countdown";
     message?: string;
     count?: number;
 }
 
-const ASDFriendlyUI: React.FC<ASDFriendlyUIProps> = ({
+const SupportiveUI: React.FC<SupportiveUIProps> = ({
     type = "loading",
     message,
     count
@@ -67,4 +67,4 @@ const ASDFriendlyUI: React.FC<ASDFriendlyUIProps> = ({
     );
 };
 
-export default ASDFriendlyUI;
+export default SupportiveUI;
