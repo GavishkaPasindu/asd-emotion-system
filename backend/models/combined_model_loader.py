@@ -43,6 +43,13 @@ from tensorflow import keras
 from PIL import Image
 from typing import Dict, List, Optional, Tuple
 
+# Import standard Keras preprocessing for all supported architectures
+from tensorflow.keras.applications.vgg16 import preprocess_input as vgg16_pre
+from tensorflow.keras.applications.vgg19 import preprocess_input as vgg19_pre
+from tensorflow.keras.applications.resnet import preprocess_input as resnet_pre
+from tensorflow.keras.applications.resnet_v2 import preprocess_input as resnet_v2_pre
+from tensorflow.keras.applications.inception_v3 import preprocess_input as inception_v3_pre
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -403,8 +410,34 @@ class CombinedModelLoader:
 
         pil_image = Image.fromarray(img_rgb)
         resized   = cv2.resize(img_rgb, (self.img_size, self.img_size))
-        arr       = resized.astype(np.float32) / 255.0
-        return np.expand_dims(arr, axis=0), pil_image
+        
+        # ── Architecture-Specific Preprocessing ─────────────────────────────
+        # Instead of a fixed /255.0, we use the standard Keras function 
+        # that the model was originally trained with (ImageNet-style).
+        
+        # 1. Convert to float array (0-255 range initially)
+        arr = resized.astype(np.float32)
+        
+        # 2. Add batch dimension
+        arr = np.expand_dims(arr, axis=0)
+        
+        # 3. Apply the correct preprocessing logic
+        m_type = self.model_type.lower()
+        if 'vgg16' in m_type:
+            arr = vgg16_pre(arr)
+        elif 'vgg19' in m_type:
+            arr = vgg19_pre(arr)
+        elif 'resnet50v2' in m_type:
+            arr = resnet_v2_pre(arr)
+        elif 'resnet50' in m_type:
+            arr = resnet_pre(arr)
+        elif 'inceptionv3' in m_type:
+            arr = inception_v3_pre(arr)
+        else:
+            # Fallback to simple scaling if unknown (better than nothing)
+            arr = arr / 255.0
+            
+        return arr, pil_image
 
     # ΓöÇΓöÇΓöÇ Grad-CAM XAI core ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
