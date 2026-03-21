@@ -5788,5 +5788,616 @@
             "selected_video": "fruits"
         },
         "ended_at": "2026-03-17T16:29:41.047611"
+    },
+    "1163a5cd-be81-4de2-a442-b3637b971e7d": {
+        "id": "1163a5cd-be81-4de2-a442-b3637b971e7d",
+        "started_at": "2026-03-21T21:59:51.934534",
+        "duration": 10,
+        "frames": [
+            {
+                "timestamp": "2026-03-21T21:59:57.313046",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T21:59:57.782861",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T21:59:58.275928",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T21:59:58.775721",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T21:59:59.297775",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T21:59:59.776196",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:00.274753",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:00.779815",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:01.297783",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:01.782753",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:02.282438",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:02.942438",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:03.289293",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:03.783615",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:04.295945",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:04.785864",
+                "has_prediction": false
+            },
+            {
+                "timestamp": "2026-03-21T22:00:05.301623",
+                "has_prediction": false
+            }
+        ],
+        "predictions": [
+            {
+                "timestamp": "2026-03-21T21:59:57.313046",
+                "frame_index": 0,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.7734,
+                    "probabilities": {
+                        "anger": 0.2032,
+                        "joy": 0.007,
+                        "sadness": 0.0164,
+                        "surprise": 0.7734
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.7734
+                        },
+                        {
+                            "emotion": "anger",
+                            "probability": 0.2032
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0164
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T21:59:57.782861",
+                "frame_index": 1,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "anger",
+                    "confidence": 0.794,
+                    "probabilities": {
+                        "anger": 0.794,
+                        "joy": 0.0021,
+                        "sadness": 0.0347,
+                        "surprise": 0.1692
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "anger",
+                            "probability": 0.794
+                        },
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.1692
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0347
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T21:59:58.275928",
+                "frame_index": 2,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "anger",
+                    "confidence": 0.6112,
+                    "probabilities": {
+                        "anger": 0.6112,
+                        "joy": 0.0022,
+                        "sadness": 0.0197,
+                        "surprise": 0.3669
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "anger",
+                            "probability": 0.6112
+                        },
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.3669
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0197
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T21:59:58.775721",
+                "frame_index": 3,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.7983,
+                    "probabilities": {
+                        "anger": 0.1768,
+                        "joy": 0.0012,
+                        "sadness": 0.0237,
+                        "surprise": 0.7983
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.7983
+                        },
+                        {
+                            "emotion": "anger",
+                            "probability": 0.1768
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0237
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T21:59:59.297775",
+                "frame_index": 4,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "joy",
+                    "confidence": 0.7979,
+                    "probabilities": {
+                        "anger": 0.0256,
+                        "joy": 0.7979,
+                        "sadness": 0.0974,
+                        "surprise": 0.0792
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "joy",
+                            "probability": 0.7979
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0974
+                        },
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.0792
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T21:59:59.776196",
+                "frame_index": 5,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "joy",
+                    "confidence": 0.5587,
+                    "probabilities": {
+                        "anger": 0.0555,
+                        "joy": 0.5587,
+                        "sadness": 0.0568,
+                        "surprise": 0.329
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "joy",
+                            "probability": 0.5587
+                        },
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.329
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0568
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:00.274753",
+                "frame_index": 6,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.8641,
+                    "probabilities": {
+                        "anger": 0.0737,
+                        "joy": 0.0147,
+                        "sadness": 0.0474,
+                        "surprise": 0.8641
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.8641
+                        },
+                        {
+                            "emotion": "anger",
+                            "probability": 0.0737
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0474
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:00.779815",
+                "frame_index": 7,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.7196,
+                    "probabilities": {
+                        "anger": 0.2053,
+                        "joy": 0.0088,
+                        "sadness": 0.0664,
+                        "surprise": 0.7196
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.7196
+                        },
+                        {
+                            "emotion": "anger",
+                            "probability": 0.2053
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0664
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:01.297783",
+                "frame_index": 8,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "anger",
+                    "confidence": 0.4975,
+                    "probabilities": {
+                        "anger": 0.4975,
+                        "joy": 0.0036,
+                        "sadness": 0.063,
+                        "surprise": 0.4359
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "anger",
+                            "probability": 0.4975
+                        },
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.4359
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.063
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:01.782753",
+                "frame_index": 9,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "joy",
+                    "confidence": 0.5649,
+                    "probabilities": {
+                        "anger": 0.0287,
+                        "joy": 0.5649,
+                        "sadness": 0.0722,
+                        "surprise": 0.3342
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "joy",
+                            "probability": 0.5649
+                        },
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.3342
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0722
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:02.282438",
+                "frame_index": 10,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.4871,
+                    "probabilities": {
+                        "anger": 0.2434,
+                        "joy": 0.2462,
+                        "sadness": 0.0234,
+                        "surprise": 0.4871
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.4871
+                        },
+                        {
+                            "emotion": "joy",
+                            "probability": 0.2462
+                        },
+                        {
+                            "emotion": "anger",
+                            "probability": 0.2434
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:02.942438",
+                "frame_index": 11,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.6047,
+                    "probabilities": {
+                        "anger": 0.2704,
+                        "joy": 0.0434,
+                        "sadness": 0.0815,
+                        "surprise": 0.6047
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.6047
+                        },
+                        {
+                            "emotion": "anger",
+                            "probability": 0.2704
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0815
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:03.289293",
+                "frame_index": 12,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.6807,
+                    "probabilities": {
+                        "anger": 0.0331,
+                        "joy": 0.2395,
+                        "sadness": 0.0467,
+                        "surprise": 0.6807
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.6807
+                        },
+                        {
+                            "emotion": "joy",
+                            "probability": 0.2395
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0467
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:03.783615",
+                "frame_index": 13,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.8645,
+                    "probabilities": {
+                        "anger": 0.0554,
+                        "joy": 0.017,
+                        "sadness": 0.063,
+                        "surprise": 0.8645
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.8645
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.063
+                        },
+                        {
+                            "emotion": "anger",
+                            "probability": 0.0554
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:04.295945",
+                "frame_index": 14,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.9164,
+                    "probabilities": {
+                        "anger": 0.0372,
+                        "joy": 0.0089,
+                        "sadness": 0.0375,
+                        "surprise": 0.9164
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.9164
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0375
+                        },
+                        {
+                            "emotion": "anger",
+                            "probability": 0.0372
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:04.785864",
+                "frame_index": 15,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.8247,
+                    "probabilities": {
+                        "anger": 0.028,
+                        "joy": 0.1018,
+                        "sadness": 0.0456,
+                        "surprise": 0.8247
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.8247
+                        },
+                        {
+                            "emotion": "joy",
+                            "probability": 0.1018
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.0456
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            },
+            {
+                "timestamp": "2026-03-21T22:00:05.301623",
+                "frame_index": 16,
+                "asd_analysis": null,
+                "emotion_analysis": {
+                    "success": true,
+                    "predicted_emotion": "surprise",
+                    "confidence": 0.5928,
+                    "probabilities": {
+                        "anger": 0.261,
+                        "joy": 0.0405,
+                        "sadness": 0.1057,
+                        "surprise": 0.5928
+                    },
+                    "top_emotions": [
+                        {
+                            "emotion": "surprise",
+                            "probability": 0.5928
+                        },
+                        {
+                            "emotion": "anger",
+                            "probability": 0.261
+                        },
+                        {
+                            "emotion": "sadness",
+                            "probability": 0.1057
+                        }
+                    ],
+                    "model_type": "resnet50v2"
+                }
+            }
+        ],
+        "status": "completed",
+        "metadata": {
+            "child_age": null,
+            "session_type": "screening",
+            "selected_video": "fruits"
+        },
+        "ended_at": "2026-03-21T22:00:24.988758"
     }
 }
