@@ -12,12 +12,7 @@ from tensorflow import keras
 from PIL import Image
 from typing import Dict, Tuple, Optional, List
 
-# Import standard Keras preprocessing for all supported architectures
-from tensorflow.keras.applications.vgg16 import preprocess_input as vgg16_pre
-from tensorflow.keras.applications.vgg19 import preprocess_input as vgg19_pre
-from tensorflow.keras.applications.resnet import preprocess_input as resnet_pre
-from tensorflow.keras.applications.resnet_v2 import preprocess_input as resnet_v2_pre
-from tensorflow.keras.applications.inception_v3 import preprocess_input as inception_v3_pre
+# Preprocessing is now a simple 1/255 scaling to match Colab training
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -112,28 +107,16 @@ class FYPModelLoader:
         pil_image = Image.fromarray(img_rgb)
         img_resized = cv2.resize(img_rgb, (self.img_size, self.img_size))
         
-        # ── Architecture-Specific Preprocessing ─────────────────────────────
+        # ── Preprocessing (Matching Colab Notebooks) ──────────────────────────
         # 1. Convert to float array (0-255 range initially)
         arr = img_resized.astype(np.float32)
         
-        # 2. Add batch dimension
-        img_batch = np.expand_dims(arr, axis=0)
+        # 2. Rescale to [0, 1] range as per ImageDataGenerator(rescale=1./255)
+        # All models in this project were trained with this simple scaling.
+        arr = arr / 255.0
         
-        # 3. Apply the correct preprocessing logic per architecture
-        m_type = self.model_type.lower()
-        if 'vgg16' in m_type:
-            img_batch = vgg16_pre(img_batch)
-        elif 'vgg19' in m_type:
-            img_batch = vgg19_pre(img_batch)
-        elif 'resnet50v2' in m_type:
-            img_batch = resnet_v2_pre(img_batch)
-        elif 'resnet50' in m_type:
-            img_batch = resnet_pre(img_batch)
-        elif 'inceptionv3' in m_type:
-            img_batch = inception_v3_pre(img_batch)
-        else:
-            # Fallback to simple scaling if unknown
-            img_batch = img_batch / 255.0
+        # 3. Add batch dimension
+        img_batch = np.expand_dims(arr, axis=0)
             
         return img_batch, pil_image
     
