@@ -14,6 +14,10 @@ env/
 # Environment variables
 .env
 
+# AWS Keys (NEVER UPLOAD THESE!)
+*.pem
+.aws/
+
 # Trained ML models (too large for git — upload via Railway Volume or external storage)
 trained_models/*.h5
 trained_models/*.keras
