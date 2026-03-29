@@ -17,6 +17,7 @@ from PIL import Image
 import io
 
 from models.manager import model_manager
+from utils.face_detection import has_face
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -524,10 +525,19 @@ def capture_frame():
         
         if model:
             try:
-                # Use fast emotion-only prediction (no XAI/Grad-CAM) for real-time responsiveness
-                emotion_result = model.predict_emotion_fast(img_bytes)
-                if not emotion_result.get('success'):
-                    emotion_result = None
+                # Validate face presence before prediction
+                if not has_face(img_bytes):
+                    emotion_result = {
+                        "success": True, 
+                        "predicted_emotion": "No Face Detected",
+                        "confidence": 0.0,
+                        "probabilities": {}
+                    }
+                else:
+                    # Use fast emotion-only prediction (no XAI/Grad-CAM) for real-time responsiveness
+                    emotion_result = model.predict_emotion_fast(img_bytes)
+                    if not emotion_result.get('success'):
+                        emotion_result = None
             except Exception as e:
                 logger.error(f"Prediction error in gamification: {e}")
             

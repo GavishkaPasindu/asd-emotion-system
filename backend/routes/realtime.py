@@ -12,6 +12,7 @@ import numpy as np
 from datetime import datetime
 
 from models.manager import model_manager
+from utils.face_detection import has_face
 
 realtime_bp = Blueprint('realtime', __name__)
 
@@ -101,6 +102,18 @@ def init_socketio(socketio):
             
             if not detector:
                 emit('error', {'message': 'Emotion detector not available'})
+                return
+
+            # Validate face presence before prediction
+            if not has_face(image_bytes):
+                # Optionally emit a 'no_face' status so the frontend can show a warning
+                emit('emotion_update', {
+                    'emotion': 'No Face Detected',
+                    'confidence': 0.0,
+                    'probabilities': {},
+                    'timestamp': data.get('timestamp', 0),
+                    'top_emotions': []
+                })
                 return
 
             # Predict emotion

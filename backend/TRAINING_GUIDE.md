@@ -14,8 +14,7 @@ pip install -r requirements.txt
 ### 2. Dataset Preparation
 
 #### ASD Detection Dataset
-Source: [Kaggle - Autism Facial Emotion Recognition](https://www.kaggle.com/datasets/hasibur013/autism-facial-emotion-recognition)
-
+Source: [Kaggle - Autism Facial Emotion Recognition]
 Structure:
 --- asd_data/
     --- ASD/          (ASD positive facial images)
