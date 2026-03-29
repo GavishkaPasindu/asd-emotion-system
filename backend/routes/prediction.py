@@ -55,32 +55,43 @@ def _read_image():
     image_bytes = file.read()
     has_face = _has_face(image_bytes)
     if not has_face:
-        print("DEBUG: Face detection found 0 faces -- proceeding anyway (fail-open)")
+        print("DEBUG: Face detection found 0 faces -- rejecting request")
+        return None, (jsonify({
+            'success': False, 
+            'error': 'No face detected in the image. Please upload a clear photo of a person\'s face for accurate analysis.'
+        }), 400)
     
     print(f"DEBUG: Image read successfully, size: {len(image_bytes)} bytes")
     return image_bytes, None
 
 
 def _has_face(image_bytes: bytes) -> bool:
-    """Return True if a face is detected, or True on error (fail-open for safety)."""
+    """Return True if a face is detected. Strictly rejects on error or no face."""
     try:
         nparr  = np.frombuffer(image_bytes, np.uint8)
         img    = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if img is None:
             print("DEBUG: cv2.imdecode returned None")
-            return True # Fail-open
+            return False
         
         gray   = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         cc     = cv2.CascadeClassifier(
             cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
         )
-        # More lenient parameters
-        faces  = cc.detectMultiScale(gray, scaleFactor=1.05, minNeighbors=3, minSize=(20, 20))
+        
+        # Stricter parameters to avoid false positives on non-face images
+        faces  = cc.detectMultiScale(
+            gray, 
+            scaleFactor=1.1,     # Increased from 1.05
+            minNeighbors=5,      # Increased from 3
+            minSize=(30, 30)     # Increased from 20x20
+        )
+        
         print(f"DEBUG: Face detection found {len(faces)} faces")
         return len(faces) > 0
     except Exception as e:
-        print(f"Face detection error (fail-open): {e}")
-        return True
+        print(f"Face detection error: {e}")
+        return False
 
 
 # ------------------------------------------------------------------------------

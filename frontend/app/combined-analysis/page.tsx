@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Layers, Upload, Sparkles, Brain, Smile } from 'lucide-react';
+import { Layers, Upload, Sparkles, Brain, Smile, AlertCircle } from 'lucide-react';
 import FileUpload from '../components/FileUpload';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ResultsDisplay from '../components/ResultsDisplay';
@@ -88,6 +88,25 @@ export default function CombinedAnalysisPage() {
                     {loading && (
                         <div className="card max-w-2xl mx-auto">
                             <LoadingSpinner size="lg" text="Running comprehensive analysis..." />
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {!loading && result && !result.success && (
+                        <div className="card bg-[rgb(var(--color-danger)/0.05)] border-[rgb(var(--color-danger)/0.3)] max-w-2xl mx-auto animate-slide-up mb-8">
+                            <div className="flex items-start gap-4 p-2">
+                                <div className="p-3 rounded-full bg-[rgb(var(--color-danger)/0.1)]">
+                                    <AlertCircle className="w-8 h-8 text-[rgb(var(--color-danger))]" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-[rgb(var(--color-danger))] mb-1">
+                                        Analysis Requirement Not Met
+                                    </h3>
+                                    <p className="text-[rgb(var(--color-text-secondary))] leading-relaxed">
+                                        {result.error || 'The system was unable to process this image. Please ensure you upload a clear, front-facing photo of a face.'}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     )}
 
