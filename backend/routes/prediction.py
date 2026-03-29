@@ -66,10 +66,10 @@ def _read_image():
 
 
 def _has_face(image_bytes: bytes) -> bool:
-    """Multi-stage face detection: MediaPipe (Primary) + Haar Cascade (Secondary)."""
+    """Strict face detection: MediaPipe (Primary) + Stricter Haar Fallback + Pattern Rejection."""
     try:
-        nparr  = np.frombuffer(image_bytes, np.uint8)
-        img    = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if img is None:
             return False
             
@@ -77,17 +77,15 @@ def _has_face(image_bytes: bytes) -> bool:
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         h, w = img.shape[:2]
 
-        # --- Stage 1: MediaPipe Face Detection (Highly Robust) ---
+        # --- Stage 1: Stricter MediaPipe Face Detection ---
         try:
             import mediapipe as mp
             from mediapipe.tasks import python as mp_python
             from mediapipe.tasks.python import vision as mp_vision
             import os
 
-            # Use the already downloaded model or fallback path
             model_path = os.path.join(os.getcwd(), 'trained_models', 'face_landmarker.task')
             if not os.path.exists(model_path):
-                # Fallback to /tmp if not in trained_models
                 model_path = '/tmp/face_landmarker.task'
 
             if os.path.exists(model_path):
@@ -95,47 +93,50 @@ def _has_face(image_bytes: bytes) -> bool:
                 options = mp_vision.FaceLandmarkerOptions(
                     base_options=base_opts,
                     num_faces=1,
-                    min_face_detection_confidence=0.35, # Slightly more lenient for children/tilts
+                    min_face_detection_confidence=0.55, # Increased from 0.35 to avoid patterns
                 )
                 with mp_vision.FaceLandmarker.create_from_options(options) as detector:
                     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img_rgb)
                     detection_result = detector.detect(mp_image)
                     if detection_result.face_landmarks:
-                        print(f"DEBUG: MediaPipe detected face presence.")
+                        print("DEBUG: MediaPipe confirmed high-confidence face.")
                         return True
         except Exception as e:
-            print(f"DEBUG: MediaPipe detection stage failed/skipped: {e}")
+            print(f"DEBUG: MediaPipe stage failed: {e}")
 
-        # --- Stage 2: Balanced Haar Cascade (Solid Secondary) ---
-        cc = cv2.CascadeClassifier(
-            cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-        )
-        # Moderate parameters to catch real faces and reject dashboards
+        # --- Stage 2: Stricter Haar Cascade + Pattern Rejection ---
+        cc = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        
+        # Stricter parameters: higher minNeighbors and larger minSize
         faces = cc.detectMultiScale(
             gray, 
-            scaleFactor=1.08,    # Balanced (reduced from 1.1)
-            minNeighbors=4,     # Balanced (reduced from 5)
-            minSize=(30, 30)
+            scaleFactor=1.1, 
+            minNeighbors=6,   # Require higher consensus (increased from 4)
+            minSize=(100, 100) # Require decent face size for clinical analysis
         )
         
+        # --- Pattern Rejection Logic ---
+        # If too many small repetitive objects are found (like mat circles), reject the image.
+        if len(faces) > 4:
+            print(f"DEBUG: Pattern Rejection Triggered! Found {len(faces)} repetitive objects.")
+            return False
+
         if len(faces) > 0:
-            print(f"DEBUG: Haar Cascade detected {len(faces)} face(s).")
+            print(f"DEBUG: Strict Haar Cascade detected {len(faces)} face(s).")
             return True
 
-        # --- Stage 3: Profile Face Cascade (For side-facing/tilted) ---
-        pc = cv2.CascadeClassifier(
-            cv2.data.haarcascades + 'haarcascade_profileface.xml'
-        )
-        profiles = pc.detectMultiScale(gray, 1.08, 4, (30, 30))
+        # --- Stage 3: Strict Profile Cascade ---
+        pc = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_profileface.xml')
+        profiles = pc.detectMultiScale(gray, 1.1, 6, (100, 100))
         if len(profiles) > 0:
-            print(f"DEBUG: Profile Cascade detected {len(profiles)} face(s).")
+            print(f"DEBUG: Strict Profile Cascade detected {len(profiles)} face(s).")
             return True
 
-        print("DEBUG: ALL detection stages found 0 faces.")
+        print("DEBUG: Image rejected - no clear face detected.")
         return False
 
     except Exception as e:
-        print(f"Face detection critical error: {e}")
+        print(f"Critical face detection error: {e}")
         return False
 
 

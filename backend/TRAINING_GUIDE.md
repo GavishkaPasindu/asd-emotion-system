@@ -28,11 +28,11 @@ Standardized Extraction Path: `C:\Users\pc\Desktop\datasetnew\emotion_data`
 emotion_data/
 ├-- train/
 │   ├-- anger/
-│   ├-- fear/
+│   ├-- 
 │   ├-- joy/
 │   ├-- sadness/
 │   ├-- surprise/
-│   └-- Natural/
+│  
 └-- test/
     └-- (same structure)
 ```
