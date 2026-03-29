@@ -628,15 +628,17 @@ class CombinedModelLoader:
             import urllib.request
 
             # Download the face landmark model if not cached
-            model_path = '/tmp/face_landmarker.task'
+            model_path = os.path.join(os.getcwd(), 'trained_models', 'face_landmarker.task')
             if not os.path.exists(model_path):
+                # Fallback directory
+                os.makedirs(os.path.dirname(model_path), exist_ok=True)
                 logger.info('Downloading MediaPipe face_landmarker.task (~29 MB)...')
                 urllib.request.urlretrieve(
                     'https://storage.googleapis.com/mediapipe-models/face_landmarker/'
                     'face_landmarker/float16/1/face_landmarker.task',
                     model_path
                 )
-                logger.info('  face_landmarker.task downloaded [CHECK]')
+                logger.info(f'  face_landmarker.task downloaded to {model_path} [CHECK]')
 
             base_opts = mp_python.BaseOptions(model_asset_path=model_path)
             options   = mp_vision.FaceLandmarkerOptions(
