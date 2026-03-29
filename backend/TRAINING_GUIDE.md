@@ -1,150 +1,83 @@
 # Model Training Guide
 
-This directory contains training scripts to generate the ML models for the ASD emotion detection system.
+This guide describes the process of preparing and training the machine learning models for the ASD emotion detection system.
 
 ## Prerequisites
 
 ### 1. Install Dependencies
 
+Install the required Python packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Download Datasets
+### 2. Dataset Preparation
 
 #### ASD Detection Dataset
-Download from Kaggle: https://www.kaggle.com/datasets/hasibur013/autism-facial-emotion-recognition
+Source: [Kaggle - Autism Facial Emotion Recognition](https://www.kaggle.com/datasets/hasibur013/autism-facial-emotion-recognition)
 
-Standardized Extraction Path: `C:\Users\pc\Desktop\datasetnew\asd_data`
-```
-asd_data/
-├-- ASD/          (ASD images)
-└-- NON_ASD/      (Non-ASD images)
-```
+Structure:
+--- asd_data/
+    --- ASD/          (ASD positive facial images)
+    --- NON_ASD/      (Control group facial images)
 
 #### Emotion Recognition Dataset
-Standardized Extraction Path: `C:\Users\pc\Desktop\datasetnew\emotion_data`
-```
-emotion_data/
-├-- train/
-│   ├-- anger/
-│   ├-- 
-│   ├-- joy/
-│   ├-- sadness/
-│   ├-- surprise/
-│  
-└-- test/
-    └-- (same structure)
-```
+Structure:
+--- emotion_data/
+    --- train/
+        --- anger/
+        --- joy/
+        --- sadness/
+        --- surprise/
+    --- test/        (same structure)
 
-## Training the Models
+## Training Process
 
-### Train ASD Detection Model
+The models are developed using the "Improved" architecture set (ResNet50V2, InceptionV3, etc.) as documented in the Google Colab notebooks.
 
-```bash
-python train_asd_model.py
-```
+### Supported Architectures
+- ResNet50V2 (Recommended for best accuracy)
+- InceptionV3
+- VGG16 / VGG19
+- ResNet50
 
-This will:
-- Load the ASD/NON_ASD dataset
-- Train a CNN model for ~15 epochs
-- Save the best model to `trained_models/best_asd_model.h5`
-- Generate training history plots
+### Training via Google Colab
+The primary training workflow is managed through the standalone notebooks in:
+backend/colab_notebooks/
 
-**Expected Output:**
-- Model file: `trained_models/best_asd_model.h5`
-- Training plot: `trained_models/asd_training_history.png`
-- Accuracy: ~85-95% (depends on dataset quality)
+1. Upload the notebooks to Google Colab.
+2. Link your preferred dataset source.
+3. Execute the training cells to generate the .h5 model files.
+4. Download the resulting .h5 files to the backend/trained_models/ directory.
 
-### Train Emotion Recognition Model
+## Model Specifications
 
-```bash
-python train_emotion_model.py
-```
-
-This will:
-- Load the emotion dataset (6 classes)
-- Train a PyTorch CNN model for ~8 epochs
-- Save the model to `trained_models/emotion_model_complete.pt`
-- Generate training history plots
-
-**Expected Output:**
-- Model file: `trained_models/emotion_model_complete.pt`
-- Training plot: `trained_models/emotion_training_history.png`
-- Accuracy: ~80-90% (depends on dataset quality)
-
-## Training Configuration
-
-### ASD Model
-- Image Size: 128x128
-- Batch Size: 16
-- Epochs: 15 (with early stopping)
-- Architecture: 4-layer CNN with BatchNorm and Dropout
+### ASD Detection
+- Input: 224x224 RGB
 - Framework: TensorFlow/Keras
+- Output: Binary (Sigmoid)
+- Key Layers: GlobalAveragePooling2D, Dense(512), BatchNorm, Dropout(0.5)
 
-### Emotion Model
-- Image Size: 128x128
-- Batch Size: 64
-- Epochs: 8 (with early stopping)
-- Architecture: 3-layer CNN with BatchNorm
-- Framework: PyTorch
-
-## Training Time
-
-- **ASD Model**: ~5-15 minutes (depending on dataset size and hardware)
-- **Emotion Model**: ~2-5 minutes (depending on dataset size and hardware)
-
-With GPU: Much faster (~2-5 minutes total)
-With CPU: Slower but still manageable (~10-20 minutes total)
+### Emotion Recognition
+- Input: 224x224 RGB
+- Framework: TensorFlow/Keras
+- Output: 4-class Softmax
+- Classes: Anger, Joy, Sadness, Surprise
 
 ## Troubleshooting
 
-### Dataset Not Found
-Make sure your dataset is extracted in the correct location:
-- ASD: `C:\Users\pc\Desktop\datasetnew\asd_data\ASD\`
-- Emotion: `C:\Users\pc\Desktop\datasetnew\emotion_data\train\`
+### Low Detection Accuracy
+- Ensure images are cropped specifically to the face region.
+- Verify that the data augmentation parameters (rotation, zoom, flip) are active during training.
+- Check for class imbalance in the training set.
 
-### Out of Memory
-Reduce batch size in the training scripts:
-- ASD: Change `BATCH_SIZE = 16` to `BATCH_SIZE = 8`
-- Emotion: Change `BATCH_SIZE = 64` to `BATCH_SIZE = 32`
+### Real-time Performance Issues
+- If using CPU, consider using the VGG16 architecture for faster inference.
+- Ensure the MediaPipe face detection model is correctly cached in backend/trained_models/.
 
-### Low Accuracy
-- Ensure dataset quality is good
-- Check if images are properly labeled
-- Try training for more epochs
-- Increase data augmentation
+## Post-Training Deployment
 
-## After Training
-
-Once both models are trained, you can:
-
-1. **Test the backend:**
-```bash
-python app.py
-```
-
-2. **Test predictions:**
-The backend will automatically load the models from `trained_models/`
-
-3. **Use with frontend:**
-Start the frontend and upload images to test the full system
-
-## Model Files
-
-After successful training, you should have:
-```
-trained_models/
-├-- best_asd_model.h5              # ASD detection model (TensorFlow)
-├-- emotion_model_complete.pt       # Emotion recognition model (PyTorch)
-├-- asd_training_history.png        # Training plots
-└-- emotion_training_history.png    # Training plots
-```
-
-## Notes
-
-- The training scripts are adapted from the original Colab notebooks
-- Models use the same architecture as the original code
-- Training includes data augmentation for better generalization
-- Early stopping prevents overfitting
-- Best models are automatically saved during training
+Once .h5 files are generated:
+1. Place them in: backend/trained_models/
+2. Update the environment variables in .env if custom filenames are used.
+3. Restart the Flask server (python app.py) to load the new models.
